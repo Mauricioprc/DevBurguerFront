@@ -89,6 +89,36 @@ function configurarEventListeners() {
             }
         });
     });
+    // 1. Abrir o menu ao clicar nos três risquinhos
+    if (ELEMENTS.mobileMenuBtn) {
+        ELEMENTS.mobileMenuBtn.addEventListener('click', () => {
+            ELEMENTS.navMenu.classList.add('active');
+            ELEMENTS.menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Trava o fundo de rolar
+        });
+    }
+
+    // 2. Função para fechar o menu
+    const fecharMenuMobile = () => {
+        ELEMENTS.navMenu.classList.remove('active');
+        if(ELEMENTS.menuOverlay) ELEMENTS.menuOverlay.classList.remove('active');
+        document.body.style.overflow = 'auto'; // Destrava a rolagem do fundo
+    };
+
+    // 3. Fechar menu ao clicar no X
+    if (ELEMENTS.closeMenuBtn) {
+        ELEMENTS.closeMenuBtn.addEventListener('click', fecharMenuMobile);
+    }
+
+    // 4. Fechar menu ao clicar no fundo escuro
+    if (ELEMENTS.menuOverlay) {
+        ELEMENTS.menuOverlay.addEventListener('click', fecharMenuMobile);
+    }
+
+    // 5. Fechar menu ao clicar em qualquer link (ex: Início, Cardápio)
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', fecharMenuMobile);
+    });
 
     console.log('✅ Event listeners configurados');
 }

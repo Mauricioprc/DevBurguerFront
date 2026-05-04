@@ -67,52 +67,86 @@
 /* CARDS */
 .card {
     background: var(--color-white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
+    border-radius: var(--radius-xl); /* Arredondamento moderno e suave */
+    box-shadow: var(--shadow-sm); /* Sombra mais discreta no estado normal */
+    overflow: hidden; /* Garante que a imagem não vaze as bordas arredondadas */
     transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-light-dark); /* Linha sutil de contorno */
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px); /* Levanta o cartão */
+    box-shadow: var(--shadow-lg); /* Aumenta a sombra */
 }
 
-.card-image {
+/* Área da Imagem */
+.card-header {
     width: 100%;
-    height: 200px;
-    object-fit: cover;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
+    height: 180px; /* Altura padrão para a foto */
+    overflow: hidden;
 }
 
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* A imagem preenche o quadro sem distorcer */
+    transition: transform var(--transition-slow); /* Prepara a animação */
+}
+
+/* Efeito de zoom na foto ao passar o mouse no card */
+.card:hover .card-img-top {
+    transform: scale(1.08); 
+}
+
+/* Área de Texto */
 .card-content {
     padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Faz o conteúdo ocupar todo o espaço restante */
+    justify-content: space-between; /* Empurra o rodapé pro fundo */
+}
+
+.card-text-area {
+    margin-bottom: var(--spacing-md);
 }
 
 .card-title {
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
-    margin-bottom: var(--spacing-sm);
-    color: var(--color-text);
+    color: var(--color-dark);
+    margin-bottom: var(--spacing-xs);
+    line-height: var(--line-height-tight);
 }
 
 .card-description {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
-    margin-bottom: var(--spacing-md);
     line-height: var(--line-height-normal);
 }
 
+/* Rodapé do Card (Preço e Botão) */
 .card-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-top: var(--spacing-md);
-    border-top: 1px solid var(--color-light-dark);
+    border-top: 1px dashed var(--color-light-dark); /* Divisória tracejada elegante */
+}
+
+.preco {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+/* Ajuste específico para o botão pequeno do card */
+.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-full); /* Botão redondinho (pill shape) */
 }
 
 /* BADGE */
@@ -144,6 +178,10 @@
 .badge-danger {
     background: var(--color-error);
     color: var(--color-white);
+}
+.badge-accent {
+    background: var(--color-accent);
+    color: var(--color-dark);
 }
 
 /* FORMULÁRIOS */

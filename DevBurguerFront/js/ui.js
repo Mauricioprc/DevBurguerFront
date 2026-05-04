@@ -44,14 +44,23 @@ function renderizarProdutos(categoria = 'todos') {
     ELEMENTS.productsGrid.innerHTML = produtos
         .map(produto => `
             <div class="card">
-                <div class="card-image">${produto.emoji}</div>
+                <!-- Cabeçalho do card que agora contém a imagem -->
+                <div class="card-header">
+                    <!-- A propriedade produto.imagem é injetada aqui -->
+                    <img src="${produto.imagem || 'https://via.placeholder.com/300x200/f5f5f5/888888?text=Sem+Foto'}" alt="${produto.nome}" class="card-img-top">
+                </div>
+                
+                <!-- Corpo do card com os textos alinhados -->
                 <div class="card-content">
-                    <h3 class="card-title">${produto.nome}</h3>
-                    <p class="card-description">${produto.descricao}</p>
+                    <div class="card-text-area">
+                        <h3 class="card-title">${produto.nome}</h3>
+                        <p class="card-description">${produto.descricao}</p>
+                    </div>
+                    
                     <div class="card-footer">
                         <span class="preco">R$ ${produto.preco.toFixed(2)}</span>
                         <button class="btn btn-primary btn-sm" onclick="adicionarAoCarrinho(${produto.id})">
-                            Adicionar
+                            <span class="btn-icon">+</span> Add
                         </button>
                     </div>
                 </div>
@@ -66,15 +75,14 @@ function renderizarProdutos(categoria = 'todos') {
 function renderizarPromocoes() {
     ELEMENTS.promotionsGrid.innerHTML = PROMOCOES
         .map(promo => `
-            <div class="card">
-                <div class="card-image">${promo.emoji}</div>
-                <div class="card-content">
-                    ${promo.tag ? `<span class="badge badge-primary">${promo.tag}</span>` : ''}
-                    <h3 class="card-title">${promo.nome}</h3>
-                    <p class="card-description">${promo.descricao}</p>
-                    <div class="card-footer">
-                        <span class="preco">R$ ${promo.preco.toFixed(2)}</span>
-                    </div>
+            <div class="promo-card">
+                <div class="promo-image">${promo.emoji}</div>
+                <div class="promo-content">
+                    <!-- Usamos a nova badge-accent para destacar as tags como HOT DEAL -->
+                    ${promo.tag ? `<span class="badge badge-accent" style="align-self: flex-start; margin-bottom: 8px;">${promo.tag}</span>` : ''}
+                    <h3 class="promo-title">${promo.nome}</h3>
+                    <p class="promo-description">${promo.descricao}</p>
+                    <div class="promo-price">R$ ${promo.preco.toFixed(2)}</div>
                 </div>
             </div>
         `)

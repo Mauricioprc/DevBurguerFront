@@ -39,7 +39,16 @@
     color: var(--color-white);
     letter-spacing: -0.5px;
 }
-
+.logo-img {
+    height: 60px; 
+    width: auto;
+    display: block;
+}
+.mobile-menu-btn,
+.close-menu-btn,
+.menu-overlay {
+    display: none; 
+}
 .nav-menu {
     display: flex;
     gap: var(--spacing-2xl);
@@ -95,69 +104,106 @@
 /* HERO */
 .hero {
     position: relative;
-    min-height: 600px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-    color: var(--color-white);
-    text-align: center;
+    width: 100%;
+    height: calc(100vh - 82px); 
+    height: calc(100dvh - 82px); 
+    
+    background-color: var(--color-dark); 
     overflow: hidden;
+    display: flex; 
+    
+    /* Garante que nenhum espaçamento afete o contêiner */
+    padding: 0 !important; 
+    margin: 0;
 }
 
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 600px;
-    height: 600px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
+.hero-picture {
+    width: 100%;
+    height: 100%;
+    display: block; 
 }
 
-.hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 20% 50%, rgba(0, 188, 212, 0.1), transparent),
-                radial-gradient(circle at 80% 80%, rgba(255, 58, 68, 0.1), transparent);
-}
-
-.hero-content {
-    position: relative;
-    z-index: 1;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 0 var(--spacing-md);
-}
-
-.hero-title {
-    font-size: var(--font-size-4xl);
-    font-weight: var(--font-weight-bold);
-    margin-bottom: var(--spacing-md);
-    animation: slideDown var(--transition-slow);
-}
-
-.hero-subtitle {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-2xl);
-    opacity: 0.95;
-    animation: slideUp var(--transition-slow) 0.2s both;
-}
-
-.hero-cta {
-    animation: slideUp var(--transition-slow) 0.4s both;
+.hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    object-position: center; 
+    display: block;
 }
 
 /* PROMOÇÕES */
 .promotions {
-    background: var(--color-light);
+    /* Fundo escuro para destacar do restante do site claro */
+    background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-dark-light) 100%);
+    color: var(--color-white);
+}
+
+.promotions .section-title {
+    color: var(--color-accent); 
 }
 
 .promotions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--spacing-2xl);
+}
+
+/* O Cartão em formato de Cupom Horizontal */
+.promo-card {
+    display: flex;
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    /* Borda tracejada usando sua cor primária vermelha */
+    border: 3px dashed var(--color-primary); 
+    overflow: hidden;
+    position: relative;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.promo-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(255, 58, 68, 0.4); /* Sombra avermelhada no hover */
+}
+
+/* Área esquerda do cupom (Emoji/Imagem) */
+.promo-image {
+    width: 120px;
+    background: rgba(255, 58, 68, 0.05); /* Um fundo bem clarinho avermelhado */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    /* Linha tracejada separando a imagem do texto */
+    border-right: 2px dashed var(--color-primary); 
+}
+
+/* Área direita do cupom (Textos e Preço) */
+.promo-content {
+    padding: var(--spacing-lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.promo-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-dark);
+    margin-bottom: var(--spacing-xs);
+}
+
+.promo-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-md);
+}
+
+.promo-price {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
 }
 
 /* TOP PRODUTOS */

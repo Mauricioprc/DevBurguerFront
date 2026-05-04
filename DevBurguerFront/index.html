@@ -15,34 +15,45 @@
     <!-- HEADER -->
     <header class="header" id="header">
         <div class="header-container">
-            <div class="logo-section">
-                <div class="logo-icon">🔥</div>
-                <div class="logo-text">DevBurguer</div>
-            </div>
+            
+            <!-- 1. Botão Hambúrguer (Aparecerá apenas no Mobile) -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menu">
+                ☰
+            </button>
+
+            <!-- 2. Logo da Marca -->
+            <a href="#home" class="logo-section">
+                <img src="img/logo-devburger.jpeg" alt="DevBurguer Logo" class="logo-img">
+            </a>
+
+            <!-- 3. Menu de Navegação -->
             <nav class="nav-menu" id="navMenu">
+                <button class="close-menu-btn" id="closeMenuBtn">✕</button>
                 <a href="#home" class="nav-link">Início</a>
                 <a href="#cardapio" class="nav-link">Cardápio</a>
-                <a href="#sobre" class="nav-link">Sobre</a>
             </nav>
+
+            <!-- 4. Botão do Carrinho -->
             <button class="cart-button" id="cartButton">
                 <span class="cart-icon">🛒</span>
                 <span class="cart-count" id="cartCount">0</span>
             </button>
+            
         </div>
     </header>
 
+    <!-- Fundo escuro para destacar o menu lateral no mobile -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
     <!-- HERO SECTION -->
     <section class="hero" id="home">
-        <div class="hero-content">
-            <h1 class="hero-title">Burgers Épicos</h1>
-            <p class="hero-subtitle">A melhor carne da região. Taxa de entrega que cabe no seu bolso.</p>
-            <div class="hero-cta">
-                <button class="btn btn-primary" onclick="document.getElementById('cardapio').scrollIntoView({behavior: 'smooth'})">
-                    Ver Cardápio
-                </button>
-            </div>
-        </div>
-        <div class="hero-overlay"></div>
+        <!-- A tag picture permite trocar a imagem baseada no tamanho da tela -->
+        <picture class="hero-picture">
+            <!-- 1. IMAGEM DESKTOP: Aparece em telas maiores que 768px -->
+            <source srcset="img/BannerDev2.svg" media="(min-width: 768px)">            
+            <!-- 2. IMAGEM MOBILE: Imagem padrão para celulares -->
+            <img src="img/BannerDev.svg" alt="Destaque DevBurguer" class="hero-img">
+        </picture>
     </section>
 
     <!-- PROMOÇÕES -->

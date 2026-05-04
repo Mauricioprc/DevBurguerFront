@@ -24,10 +24,12 @@ const CONFIG = {
     // Categorias
     categorias: [
         { id: 'todos', label: 'Todos', icon: '📋' },
-        { id: 'burgers', label: 'Burgers', icon: '🍔' },
-        { id: 'acompanhamentos', label: 'Acompanhamentos', icon: '🍟' },
+        { id: 'tradicionais', label: 'Tradicionais', icon: '🍔' },
+        { id: 'gourmet', label: 'Gourmet', icon: '🥓' },
         { id: 'bebidas', label: 'Bebidas', icon: '🥤' },
-        { id: 'sobremesas', label: 'Sobremesas', icon: '🍰' },
+        { id: 'sucos', label: 'Sucos', icon: '🧃' },
+        { id: 'alcoolicas', label: 'Cervejas', icon: '🍺' },
+        { id: 'milkshakes', label: 'Milkshakes', icon: '🥛' },
     ],
 
     // Formas de Pagamento
@@ -57,6 +59,9 @@ const CONSTANTES = {
 const ELEMENTS = {
     header: document.getElementById('header'),
     navMenu: document.getElementById('navMenu'),
+    mobileMenuBtn: document.getElementById('mobileMenuBtn'),
+    closeMenuBtn: document.getElementById('closeMenuBtn'),
+    menuOverlay: document.getElementById('menuOverlay'),
     cartButton: document.getElementById('cartButton'),
     cartCount: document.getElementById('cartCount'),
     cartIcon: document.getElementById('cartIcon'),
