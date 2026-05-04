@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevBurguer - Burgers Épicos</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/globals.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layouts.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo-icon">🔥</div>
+                <div class="logo-text">DevBurguer</div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link">Início</a>
+                <a href="#cardapio" class="nav-link">Cardápio</a>
+                <a href="#sobre" class="nav-link">Sobre</a>
+            </nav>
+            <button class="cart-button" id="cartButton">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1 class="hero-title">Burgers Épicos</h1>
+            <p class="hero-subtitle">A melhor carne da região. Taxa de entrega que cabe no seu bolso.</p>
+            <div class="hero-cta">
+                <button class="btn btn-primary" onclick="document.getElementById('cardapio').scrollIntoView({behavior: 'smooth'})">
+                    Ver Cardápio
+                </button>
+            </div>
+        </div>
+        <div class="hero-overlay"></div>
+    </section>
+
+    <!-- PROMOÇÕES -->
+    <section class="promotions" id="promotions">
+        <div class="container">
+            <h2 class="section-title">🔥 Promoções Imperdíveis</h2>
+            <div class="promotions-grid" id="promotionsGrid">
+                <!-- Inserido via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- TOP 3 MAIS PEDIDOS -->
+    <section class="top-products">
+        <div class="container">
+            <h2 class="section-title">⭐ Top 3 Mais Pedidos</h2>
+            <div class="top-products-grid" id="topProductsGrid">
+                <!-- Inserido via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CARDÁPIO COMPLETO -->
+    <section class="menu" id="cardapio">
+        <div class="container">
+            <h2 class="section-title">📋 Cardápio Completo</h2>
+            
+            <!-- Categorias -->
+            <div class="categories" id="categoriesContainer">
+                <!-- Inserido via JavaScript -->
+            </div>
+
+            <!-- Grid de Produtos -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Inserido via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CARRINHO LATERAL -->
+    <aside class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <h2>Seu Carrinho</h2>
+            <button class="close-btn" id="closeCartBtn">✕</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty">Seu carrinho está vazio</div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">R$ 0,00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Taxa Entrega:</span>
+                    <span id="deliveryFee">R$ 6,00</span>
+                </div>
+                <div class="summary-row summary-total">
+                    <span>Total:</span>
+                    <span id="total">R$ 0,00</span>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-block" id="checkoutBtn">
+                Finalizar Pedido
+            </button>
+        </div>
+    </aside>
+
+    <!-- OVERLAY CARRINHO -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <!-- MODAL CHECKOUT -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Finalizar Pedido</h2>
+                <button class="close-btn" id="closeModalBtn">✕</button>
+            </div>
+            <div class="modal-content">
+                <form id="checkoutForm">
+                    <!-- DADOS DO CLIENTE -->
+                    <fieldset class="form-fieldset">
+                        <legend class="form-legend">👤 Dados do Cliente</legend>
+                        
+                        <div class="form-group">
+                            <label for="clientName" class="form-label">Nome Completo *</label>
+                            <input 
+                                type="text" 
+                                id="clientName" 
+                                class="form-input" 
+                                placeholder="Seu nome"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="clientPhone" class="form-label">Telefone *</label>
+                            <input 
+                                type="tel" 
+                                id="clientPhone" 
+                                class="form-input" 
+                                placeholder="(11) 99999-9999"
+                                required
+                            >
+                        </div>
+                    </fieldset>
+
+                    <!-- TIPO DE ENTREGA -->
+                    <fieldset class="form-fieldset">
+                        <legend class="form-legend">📍 Tipo de Entrega</legend>
+                        
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input 
+                                    type="radio" 
+                                    id="deliveryType" 
+                                    name="deliveryType" 
+                                    value="delivery" 
+                                    checked
+                                    onchange="updateDeliveryType()"
+                                >
+                                <label for="deliveryType" class="radio-label">🚚 Entrega em Casa</label>
+                            </div>
+                            <div class="radio-option">
+                                <input 
+                                    type="radio" 
+                                    id="pickupType" 
+                                    name="deliveryType" 
+                                    value="pickup"
+                                    onchange="updateDeliveryType()"
+                                >
+                                <label for="pickupType" class="radio-label">🏪 Retirada</label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- ENDEREÇO -->
+                    <fieldset class="form-fieldset" id="addressFieldset">
+                        <legend class="form-legend">🏠 Endereço de Entrega</legend>
+                        
+                        <div class="delivery-info">
+                            <strong>Localização DevBurguer:</strong>
+                            <p>Rua Principal, 123 - Centro</p>
+                            <p>Telefone: (15) 3333-3333</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address" class="form-label">Rua e Número *</label>
+                            <input 
+                                type="text" 
+                                id="address" 
+                                class="form-input" 
+                                placeholder="Rua, número"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="neighborhood" class="form-label">Bairro *</label>
+                                <input 
+                                    type="text" 
+                                    id="neighborhood" 
+                                    class="form-input" 
+                                    placeholder="Bairro"
+                                    required
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="complement" class="form-label">Complemento</label>
+                                <input 
+                                    type="text" 
+                                    id="complement" 
+                                    class="form-input" 
+                                    placeholder="Apto, sala..."
+                                >
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- PAGAMENTO -->
+                    <fieldset class="form-fieldset">
+                        <legend class="form-legend">💳 Forma de Pagamento</legend>
+                        
+                        <div class="payment-options">
+                            <div class="payment-option">
+                                <input 
+                                    type="radio" 
+                                    id="pixPayment" 
+                                    name="payment" 
+                                    value="pix" 
+                                    checked
+                                    onchange="updatePaymentMethod()"
+                                    required
+                                >
+                                <label for="pixPayment" class="payment-label">Pix 📱</label>
+                            </div>
+                            <div class="payment-option">
+                                <input 
+                                    type="radio" 
+                                    id="cardPayment" 
+                                    name="payment" 
+                                    value="card"
+                                    onchange="updatePaymentMethod()"
+                                >
+                                <label for="cardPayment" class="payment-label">Cartão 💳</label>
+                            </div>
+                            <div class="payment-option">
+                                <input 
+                                    type="radio" 
+                                    id="cashPayment" 
+                                    name="payment" 
+                                    value="cash"
+                                    onchange="updatePaymentMethod()"
+                                >
+                                <label for="cashPayment" class="payment-label">Dinheiro 💵</label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- TROCO -->
+                    <fieldset class="form-fieldset" id="changeFieldset" style="display: none;">
+                        <legend class="form-legend">💰 Troco</legend>
+                        
+                        <div class="form-group">
+                            <label for="changeAmount" class="form-label">Precisa de troco? Informe o valor</label>
+                            <input 
+                                type="number" 
+                                id="changeAmount" 
+                                class="form-input" 
+                                placeholder="Ex: 100.00"
+                                step="0.01"
+                            >
+                        </div>
+                    </fieldset>
+
+                    <!-- RESUMO PEDIDO -->
+                    <fieldset class="form-fieldset">
+                        <legend class="form-legend">📦 Resumo do Pedido</legend>
+                        
+                        <div class="order-summary">
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span id="modalSubtotal">R$ 0,00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Taxa Entrega:</span>
+                                <span id="modalDeliveryFee">R$ 6,00</span>
+                            </div>
+                            <div class="summary-row summary-total">
+                                <span>Total:</span>
+                                <span id="modalTotal">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" class="btn btn-primary btn-block btn-submit">
+                        ✅ Confirmar Pedido e Enviar para WhatsApp
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/checkout.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

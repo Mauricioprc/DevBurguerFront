@@ -1,0 +1,372 @@
+/* ============================================
+   RESPONSIVE - Media Queries
+   ============================================ */
+
+/* TABLETS - 768px */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 var(--spacing-lg);
+    }
+
+    section {
+        padding: var(--spacing-3xl) 0;
+    }
+
+    .section-title {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--spacing-2xl);
+    }
+
+    /* HEADER */
+    .header-container {
+        padding: 0 var(--spacing-lg);
+    }
+
+    .nav-menu {
+        gap: var(--spacing-lg);
+    }
+
+    .nav-link {
+        font-size: var(--font-size-sm);
+    }
+
+    /* HERO */
+    .hero {
+        min-height: 400px;
+    }
+
+    .hero-title {
+        font-size: var(--font-size-3xl);
+    }
+
+    .hero-subtitle {
+        font-size: var(--font-size-base);
+    }
+
+    /* GRIDS */
+    .promotions-grid,
+    .top-products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-lg);
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: var(--spacing-md);
+    }
+
+    /* CARRINHO */
+    .cart-panel {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* FORMULÁRIO */
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    .payment-options {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .modal {
+        width: 95%;
+        max-width: 100%;
+    }
+
+    .modal-content {
+        padding: var(--spacing-lg);
+    }
+
+    .form-fieldset {
+        padding: var(--spacing-md);
+    }
+}
+
+/* MOBILE - 576px */
+@media (max-width: 576px) {
+    :root {
+        --font-size-base: 15px;
+    }
+
+    .container {
+        padding: 0 var(--spacing-md);
+    }
+
+    section {
+        padding: var(--spacing-2xl) 0;
+    }
+
+    /* HEADER */
+    .nav-menu {
+        display: none;
+    }
+
+    .header-container {
+        padding: var(--spacing-md);
+    }
+
+    /* HERO */
+    .hero {
+        min-height: 300px;
+        padding: var(--spacing-2xl) var(--spacing-md);
+    }
+
+    .hero::before {
+        width: 300px;
+        height: 300px;
+        top: -30%;
+        right: -30%;
+    }
+
+    .hero-title {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .hero-subtitle {
+        font-size: var(--font-size-sm);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    /* SEÇÃO TITLE */
+    .section-title {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--spacing-2xl);
+    }
+
+    /* CARDS */
+    .card-image {
+        height: 150px;
+        font-size: 2rem;
+    }
+
+    .card-content {
+        padding: var(--spacing-md);
+    }
+
+    /* GRIDS */
+    .promotions-grid,
+    .top-products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+
+    /* BOTÕES */
+    .btn {
+        width: 100%;
+        padding: var(--spacing-lg) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+
+    /* CATEGORIES */
+    .categories {
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .category-btn {
+        padding: var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+
+    /* CARRINHO */
+    .cart-panel {
+        width: 100%;
+    }
+
+    .cart-header {
+        padding: var(--spacing-md);
+    }
+
+    .cart-items {
+        padding: var(--spacing-md);
+    }
+
+    .cart-item {
+        padding: var(--spacing-md);
+        flex-wrap: wrap;
+    }
+
+    .cart-item-info {
+        width: 100%;
+    }
+
+    .quantity-control {
+        width: 100%;
+        margin-top: var(--spacing-sm);
+    }
+
+    .remove-btn {
+        width: auto;
+        padding: var(--spacing-xs) var(--spacing-md);
+    }
+
+    /* MODAL */
+    .modal {
+        width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+        max-height: calc(100vh - var(--spacing-md));
+    }
+
+    .modal-header {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .modal-header h2 {
+        font-size: var(--font-size-lg);
+    }
+
+    .modal-content {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    /* FORMULÁRIO */
+    .form-fieldset {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .form-legend {
+        font-size: var(--font-size-base);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .form-group {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .form-label {
+        font-size: var(--font-size-sm);
+    }
+
+    .radio-group {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .radio-option {
+        min-width: 100%;
+    }
+
+    .radio-label {
+        padding: var(--spacing-md);
+    }
+
+    .payment-options {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-label {
+        padding: var(--spacing-md);
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    /* TOAST */
+    .toast {
+        bottom: var(--spacing-lg);
+        right: var(--spacing-lg);
+        left: var(--spacing-lg);
+        max-width: none;
+    }
+
+    /* SUMMARY */
+    .summary-row {
+        font-size: var(--font-size-xs);
+    }
+
+    .summary-total {
+        font-size: var(--font-size-base);
+    }
+
+    /* NAV LINKS */
+    .cart-button {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* XSMALL - 320px */
+@media (max-width: 360px) {
+    h1 {
+        font-size: var(--font-size-2xl);
+    }
+
+    h2 {
+        font-size: var(--font-size-xl);
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .categories {
+        flex-wrap: nowrap;
+    }
+
+    .payment-options {
+        grid-template-columns: 1fr;
+    }
+
+    .btn {
+        padding: var(--spacing-md);
+    }
+}
+
+/* ORIENTAÇÃO LANDSCAPE */
+@media (max-height: 500px) {
+    .hero {
+        min-height: 250px;
+        padding: var(--spacing-lg) 0;
+    }
+
+    .hero-title {
+        font-size: var(--font-size-2xl);
+    }
+
+    section {
+        padding: var(--spacing-2xl) 0;
+    }
+}
+
+/* IMPRESSÃO */
+@media print {
+    .header,
+    .cart-panel,
+    .cart-overlay,
+    .cart-button,
+    .btn-primary,
+    .modal-overlay {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+    }
+
+    section {
+        page-break-inside: avoid;
+    }
+}
+
+/* PREFERÊNCIAS DO NAVEGADOR */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
