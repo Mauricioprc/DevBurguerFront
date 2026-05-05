@@ -10,94 +10,111 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/layouts.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+
     <!-- HEADER -->
     <header class="header" id="header">
         <div class="header-container">
-            
-            <!-- 1. Botão Hambúrguer (Aparecerá apenas no Mobile) -->
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menu">
-                ☰
-            </button>
-
-            <!-- 2. Logo da Marca -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menu">☰</button>
             <a href="#home" class="logo-section">
                 <img src="img/logo-devburger.jpeg" alt="DevBurguer Logo" class="logo-img">
             </a>
-
-            <!-- 3. Menu de Navegação -->
-            <nav class="nav-menu" id="navMenu">
-                <button class="close-menu-btn" id="closeMenuBtn">✕</button>
-                <a href="#home" class="nav-link">Início</a>
+            <nav class="nav-menu" id="navMenu" aria-label="Menu principal">
+                <button class="close-menu-btn" id="closeMenuBtn" aria-label="Fechar menu">✕</button>
+                <a href="#home"     class="nav-link">Início</a>
+                <a href="#sobre"    class="nav-link">Sobre</a>
                 <a href="#cardapio" class="nav-link">Cardápio</a>
             </nav>
-
-            <!-- 4. Botão do Carrinho -->
-            <button class="cart-button" id="cartButton">
+            <button class="cart-button" id="cartButton" aria-label="Abrir carrinho">
                 <span class="cart-icon">🛒</span>
                 <span class="cart-count" id="cartCount">0</span>
             </button>
-            
         </div>
     </header>
 
-    <!-- Fundo escuro para destacar o menu lateral no mobile -->
     <div class="menu-overlay" id="menuOverlay"></div>
 
-    <!-- HERO SECTION -->
+    <!-- 1. HERO -->
     <section class="hero" id="home">
-        <!-- A tag picture permite trocar a imagem baseada no tamanho da tela -->
         <picture class="hero-picture">
-            <!-- 1. IMAGEM DESKTOP: Aparece em telas maiores que 768px -->
-            <source srcset="img/BannerDev2.svg" media="(min-width: 768px)">            
-            <!-- 2. IMAGEM MOBILE: Imagem padrão para celulares -->
-            <img src="img/BannerDev.svg" alt="Destaque DevBurguer" class="hero-img">
+            <source srcset="img/BannerDev.jpeg" media="(min-width: 768px)">
+            <img src="img/BannerDev2.jpeg" alt="Destaque DevBurguer" class="hero-img">
         </picture>
     </section>
 
-    <!-- PROMOÇÕES -->
-    <section class="promotions" id="promotions">
+    <!-- 2. TOP 3 MAIS PEDIDOS -->
+    <section class="top-products fade-in-section" id="destaques">
         <div class="container">
-            <h2 class="section-title">🔥 Promoções Imperdíveis</h2>
-            <div class="promotions-grid" id="promotionsGrid">
+            <div class="section-header-centered">
+                <p class="section-subtitle">Os queridinhos da galera. Vai sem erro!</p>
+            </div>
+            <div class="products-grid top-3-grid" id="topProductsGrid">
                 <!-- Inserido via JavaScript -->
             </div>
         </div>
     </section>
 
-    <!-- TOP 3 MAIS PEDIDOS -->
-    <section class="top-products">
+    <!-- 3. CARDÁPIO COMPLETO -->
+    <section class="menu fade-in-section" id="cardapio">
         <div class="container">
-            <h2 class="section-title">⭐ Top 3 Mais Pedidos</h2>
-            <div class="top-products-grid" id="topProductsGrid">
-                <!-- Inserido via JavaScript -->
+            <h2 class="section-title" style="color: white;">Cardápio Completo</h2>
+            <div class="categories" id="categoriesContainer"></div>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </section>
+
+    <!-- 4. SOBRE NÓS -->
+    <section class="about fade-in-section" id="sobre">
+        <div class="container about-container">
+            <div class="about-image">
+                <img
+                    src="https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="Nossa Lanchonete"
+                    class="about-img"
+                >
+            </div>
+            <div class="about-text">
+                <h2 class="section-title" style="text-align: left;">🍔 Sobre a DevBurguer</h2>
+                <p>Nascida da paixão por tecnologia e por hambúrgueres artesanais, a <strong>DevBurguer</strong> é o lugar onde o sabor encontra a perfeição. Preparamos cada lanche como se fosse um código de sucesso: com os <strong>melhores ingredientes, zero bugs e muito amor</strong>.</p>
+                <p>Nossa missão é entregar não apenas uma refeição, mas uma <strong>experiência épica</strong> que vai dar um verdadeiro "upgrade" no seu dia. Venha conhecer nosso espaço físico ou <strong>faça o seu pedido</strong> no conforto da sua casa!</p>
             </div>
         </div>
     </section>
 
-    <!-- CARDÁPIO COMPLETO -->
-    <section class="menu" id="cardapio">
-        <div class="container">
-            <h2 class="section-title">📋 Cardápio Completo</h2>
-            
-            <!-- Categorias -->
-            <div class="categories" id="categoriesContainer">
-                <!-- Inserido via JavaScript -->
-            </div>
-
-            <!-- Grid de Produtos -->
-            <div class="products-grid" id="productsGrid">
-                <!-- Inserido via JavaScript -->
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-brand">
+            <span class="logo-text">DevBurguer</span>
+            <p>O melhor burger artesanal da região, feito com paixão e ingredientes selecionados.</p>
+        </div>
+        <div class="footer-links">
+            <h4>Navegação</h4>
+            <div class="social-links">
+                <a href="#home"      class="social-link">Início</a>
+                <a href="#destaques" class="social-link">Destaques</a>
+                <a href="#cardapio"  class="social-link">Cardápio</a>
             </div>
         </div>
-    </section>
+        <div class="footer-social">
+            <h4>Redes Sociais</h4>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+                <a href="#" class="social-link"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 DevBurguer. Todos os direitos reservados.</p>
+        </div>
+    </footer>
 
     <!-- CARRINHO LATERAL -->
-    <aside class="cart-panel" id="cartPanel">
+    <aside class="cart-panel" id="cartPanel" aria-label="Carrinho de compras">
         <div class="cart-header">
             <h2>Seu Carrinho</h2>
-            <button class="close-btn" id="closeCartBtn">✕</button>
+            <button class="close-btn" id="closeCartBtn" aria-label="Fechar carrinho">✕</button>
         </div>
         <div class="cart-items" id="cartItems">
             <div class="cart-empty">Seu carrinho está vazio</div>
@@ -127,65 +144,38 @@
     <div class="cart-overlay" id="cartOverlay"></div>
 
     <!-- MODAL CHECKOUT -->
-    <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-overlay" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutModalTitle">
         <div class="modal">
             <div class="modal-header">
-                <h2>Finalizar Pedido</h2>
-                <button class="close-btn" id="closeModalBtn">✕</button>
+                <h2 id="checkoutModalTitle">Finalizar Pedido</h2>
+                <button class="close-btn" id="closeModalBtn" aria-label="Fechar modal">✕</button>
             </div>
             <div class="modal-content">
-                <form id="checkoutForm">
+                <form id="checkoutForm" novalidate>
+
                     <!-- DADOS DO CLIENTE -->
                     <fieldset class="form-fieldset">
                         <legend class="form-legend">👤 Dados do Cliente</legend>
-                        
                         <div class="form-group">
                             <label for="clientName" class="form-label">Nome Completo *</label>
-                            <input 
-                                type="text" 
-                                id="clientName" 
-                                class="form-input" 
-                                placeholder="Seu nome"
-                                required
-                            >
+                            <input type="text" id="clientName" class="form-input" placeholder="Seu nome" required>
                         </div>
-
                         <div class="form-group">
                             <label for="clientPhone" class="form-label">Telefone *</label>
-                            <input 
-                                type="tel" 
-                                id="clientPhone" 
-                                class="form-input" 
-                                placeholder="(11) 99999-9999"
-                                required
-                            >
+                            <input type="tel" id="clientPhone" class="form-input" placeholder="(11) 99999-9999" required>
                         </div>
                     </fieldset>
 
                     <!-- TIPO DE ENTREGA -->
                     <fieldset class="form-fieldset">
                         <legend class="form-legend">📍 Tipo de Entrega</legend>
-                        
                         <div class="radio-group">
                             <div class="radio-option">
-                                <input 
-                                    type="radio" 
-                                    id="deliveryType" 
-                                    name="deliveryType" 
-                                    value="delivery" 
-                                    checked
-                                    onchange="updateDeliveryType()"
-                                >
+                                <input type="radio" id="deliveryType" name="deliveryType" value="delivery" checked>
                                 <label for="deliveryType" class="radio-label">🚚 Entrega em Casa</label>
                             </div>
                             <div class="radio-option">
-                                <input 
-                                    type="radio" 
-                                    id="pickupType" 
-                                    name="deliveryType" 
-                                    value="pickup"
-                                    onchange="updateDeliveryType()"
-                                >
+                                <input type="radio" id="pickupType" name="deliveryType" value="pickup">
                                 <label for="pickupType" class="radio-label">🏪 Retirada</label>
                             </div>
                         </div>
@@ -193,44 +183,31 @@
 
                     <!-- ENDEREÇO -->
                     <fieldset class="form-fieldset" id="addressFieldset">
-                        <legend class="form-legend">🏠 Endereço de Entrega</legend>
-                        
-                        <div class="delivery-info">
-                            <strong>Localização DevBurguer:</strong>
+                        <legend class="form-legend" id="addressLegend">🏠 Endereço de Entrega</legend>
+
+                        <!-- Endereço da loja (modo retirada) -->
+                        <div class="shop-address-info" id="shopAddressInfo">
+                            <strong>📍 Localização da DevBurguer:</strong>
                             <p>Rua Principal, 123 - Centro</p>
                             <p>Telefone: (15) 3333-3333</p>
+                            <p class="shop-note">Seu pedido estará pronto em aproximadamente 30 a 40 minutos. Apresente seu nome no balcão.</p>
                         </div>
 
-                        <div class="form-group">
-                            <label for="address" class="form-label">Rua e Número *</label>
-                            <input 
-                                type="text" 
-                                id="address" 
-                                class="form-input" 
-                                placeholder="Rua, número"
-                                required
-                            >
-                        </div>
-
-                        <div class="form-row">
+                        <!-- Formulário de endereço do cliente (modo entrega) -->
+                        <div id="customerAddressForm">
                             <div class="form-group">
-                                <label for="neighborhood" class="form-label">Bairro *</label>
-                                <input 
-                                    type="text" 
-                                    id="neighborhood" 
-                                    class="form-input" 
-                                    placeholder="Bairro"
-                                    required
-                                >
+                                <label for="address" class="form-label">Rua e Número *</label>
+                                <input type="text" id="address" class="form-input" placeholder="Ex: Rua das Flores, 123" required>
                             </div>
-                            <div class="form-group">
-                                <label for="complement" class="form-label">Complemento</label>
-                                <input 
-                                    type="text" 
-                                    id="complement" 
-                                    class="form-input" 
-                                    placeholder="Apto, sala..."
-                                >
+                            <div class="form-row-inline">
+                                <div class="form-group">
+                                    <label for="neighborhood" class="form-label">Bairro *</label>
+                                    <input type="text" id="neighborhood" class="form-input" placeholder="Bairro" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="complement" class="form-label">Complemento</label>
+                                    <input type="text" id="complement" class="form-input" placeholder="Apto, bloco...">
+                                </div>
                             </div>
                         </div>
                     </fieldset>
@@ -238,38 +215,17 @@
                     <!-- PAGAMENTO -->
                     <fieldset class="form-fieldset">
                         <legend class="form-legend">💳 Forma de Pagamento</legend>
-                        
                         <div class="payment-options">
                             <div class="payment-option">
-                                <input 
-                                    type="radio" 
-                                    id="pixPayment" 
-                                    name="payment" 
-                                    value="pix" 
-                                    checked
-                                    onchange="updatePaymentMethod()"
-                                    required
-                                >
-                                <label for="pixPayment" class="payment-label">Pix 📱</label>
+                                <input type="radio" id="pixPayment"  name="payment" value="pix"     checked required>
+                                <label for="pixPayment"  class="payment-label">Pix 📱</label>
                             </div>
                             <div class="payment-option">
-                                <input 
-                                    type="radio" 
-                                    id="cardPayment" 
-                                    name="payment" 
-                                    value="card"
-                                    onchange="updatePaymentMethod()"
-                                >
+                                <input type="radio" id="cardPayment" name="payment" value="card">
                                 <label for="cardPayment" class="payment-label">Cartão 💳</label>
                             </div>
                             <div class="payment-option">
-                                <input 
-                                    type="radio" 
-                                    id="cashPayment" 
-                                    name="payment" 
-                                    value="cash"
-                                    onchange="updatePaymentMethod()"
-                                >
+                                <input type="radio" id="cashPayment" name="payment" value="dinheiro">
                                 <label for="cashPayment" class="payment-label">Dinheiro 💵</label>
                             </div>
                         </div>
@@ -277,24 +233,19 @@
 
                     <!-- TROCO -->
                     <fieldset class="form-fieldset" id="changeFieldset" style="display: none;">
-                        <legend class="form-legend">💰 Troco</legend>
-                        
+                        <legend class="form-legend">💰 Precisa de Troco?</legend>
                         <div class="form-group">
-                            <label for="changeAmount" class="form-label">Precisa de troco? Informe o valor</label>
-                            <input 
-                                type="number" 
-                                id="changeAmount" 
-                                class="form-input" 
-                                placeholder="Ex: 100.00"
-                                step="0.01"
-                            >
+                            <label for="changeAmount" class="form-label">Vai pagar com quanto?</label>
+                            <input type="number" id="changeAmount" class="form-input" placeholder="Ex: 100.00" step="0.01" min="0">
+                        </div>
+                        <div class="change-result" id="changeResult">
+                            Seu troco será de: <span class="change-value" id="calculatedChange">R$ 0,00</span>
                         </div>
                     </fieldset>
 
-                    <!-- RESUMO PEDIDO -->
+                    <!-- RESUMO DO PEDIDO -->
                     <fieldset class="form-fieldset">
                         <legend class="form-legend">📦 Resumo do Pedido</legend>
-                        
                         <div class="order-summary">
                             <div class="summary-row">
                                 <span>Subtotal:</span>
@@ -312,7 +263,7 @@
                     </fieldset>
 
                     <button type="submit" class="btn btn-primary btn-block btn-submit">
-                        ✅ Confirmar Pedido e Enviar para WhatsApp
+                         Confirmar Pedido e Enviar para WhatsApp
                     </button>
                 </form>
             </div>

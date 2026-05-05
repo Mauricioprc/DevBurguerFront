@@ -2,7 +2,7 @@
    RESPONSIVE - Media Queries
    ============================================ */
 
-/* TABLETS - 768px */
+/* TABLETS — 768px */
 @media (max-width: 768px) {
     .container {
         padding: 0 var(--spacing-lg);
@@ -17,7 +17,6 @@
         margin-bottom: var(--spacing-2xl);
     }
 
-    /* HEADER */
     .header-container {
         padding: 0 var(--spacing-lg);
     }
@@ -30,81 +29,59 @@
         font-size: var(--font-size-sm);
     }
 
-    /* HERO */
     .hero {
-        min-height: auto; 
-        padding: 0; 
-    }
-
-    .hero-title {
-        font-size: var(--font-size-3xl);
-    }
-
-    .hero-subtitle {
-        font-size: var(--font-size-base);
+        min-height: auto;
+        padding: 0;
     }
 
     .hero-container {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
         text-align: center;
     }
-    
+
     .hero-content {
         text-align: center;
     }
 
     .hero-title::after {
-        margin: var(--spacing-sm) auto 0 auto; 
+        margin: var(--spacing-sm) auto 0 auto;
     }
 
-    .hero-image-placeholder {
-        height: 300px; 
-    }
-
-    /* GRIDS */
+    /* GRIDS — carrossel horizontal no tablet */
     .products-grid {
-        /* Muda de grade para uma linha flexível */
-        display: flex; 
-        flex-wrap: nowrap; /* Proíbe os cards de pularem para a linha de baixo */
-        
-        /* Ativa a rolagem horizontal e esconde a vertical */
-        overflow-x: auto; 
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
         overflow-y: hidden;
-        
-        /* Espaçamento interno para a sombra do card não ser cortada */
-        padding-bottom: var(--spacing-lg); 
+        padding-bottom: var(--spacing-lg);
         padding-left: var(--spacing-xs);
         padding-right: var(--spacing-xs);
         gap: var(--spacing-md);
-        
-        /* Efeito de rolagem suave e "ímã" (para o card no centro) */
-        scroll-snap-type: x mandatory; 
-        -webkit-overflow-scrolling: touch; /* Deixa a rolagem suave em iPhones */
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
         scroll-behavior: smooth;
+        align-items: stretch;
     }
 
-    /* Esconde a barrinha de rolagem feia, mantendo apenas a função de arrastar */
     .products-grid::-webkit-scrollbar {
         display: none;
     }
 
-    /* Ajuste do tamanho individual de cada cartão no celular */
     .products-grid .card {
-
-        flex: 0 0 75%; 
-        max-width: 280px; 
-        scroll-snap-align: center; 
+        flex: 0 0 75%;
+        max-width: 280px;
+        scroll-snap-align: center;
     }
 
-    /* CARRINHO */
     .cart-panel {
         width: 100%;
         max-width: 100%;
     }
 
-    /* FORMULÁRIO */
-    .form-row {
+    .form-row,
+    .form-row-inline {
         grid-template-columns: 1fr;
+        flex-direction: column;
         gap: var(--spacing-md);
     }
 
@@ -126,7 +103,7 @@
     }
 }
 
-/* MOBILE - 576px */
+/* MOBILE — 576px */
 @media (max-width: 576px) {
     :root {
         --font-size-base: 15px;
@@ -140,25 +117,25 @@
         padding: var(--spacing-2xl) 0;
     }
 
-    /* HEADER */
+    /* HEADER mobile */
     .nav-menu {
         display: flex;
         position: fixed;
         top: 0;
-        left: -100%; /* Escondido fora da tela, na esquerda */
+        left: -100%;
         width: 250px;
         height: 100vh;
         background: var(--color-dark);
         flex-direction: column;
         align-items: flex-start;
         padding: var(--spacing-3xl) var(--spacing-lg);
-        transition: left var(--transition-base); /* Animação suave de deslizar */
+        transition: left var(--transition-base);
         z-index: var(--z-modal);
         box-shadow: var(--shadow-2xl);
     }
 
     .nav-menu.active {
-        left: 0; 
+        left: 0;
     }
 
     .nav-link {
@@ -168,7 +145,6 @@
         font-size: var(--font-size-lg);
     }
 
-    /* Botão de Fechar Menu (X) */
     .close-menu-btn {
         display: block;
         position: absolute;
@@ -178,7 +154,6 @@
         color: var(--color-white);
     }
 
-    /* Fundo Escuro atrás do menu */
     .menu-overlay {
         display: none;
         position: fixed;
@@ -186,7 +161,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0,0,0,0.6);
+        background: rgba(0, 0, 0, 0.6);
         z-index: var(--z-modal-backdrop);
     }
 
@@ -196,10 +171,11 @@
 
     .header-container {
         display: grid;
-        grid-template-columns: 1fr auto 1fr; /* Esquerda, Centro, Direita */
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
         width: 100%;
     }
+
     .mobile-menu-btn {
         display: block;
         font-size: 1.8rem;
@@ -207,63 +183,61 @@
         justify-self: start;
         padding: var(--spacing-xs);
     }
-    /* A logo fica na coluna 2 (centro) */
+
     .logo-section {
         justify-self: center;
     }
-    
+
     .logo-img {
-        height: 45px; /* Deixamos a logo um pouquinho menor no celular */
+        height: 45px;
     }
 
-    /* O carrinho fica na coluna 3 e empurrado para o final (direita) */
     .cart-button {
         justify-self: end;
+        width: 44px;
+        height: 44px;
     }
 
-    /* HERO */
+    /* HERO mobile */
     .hero {
-        min-height: auto; 
-        padding: 0; 
-        height: calc(100dvh - 70px); 
+        min-height: auto;
+        padding: 0;
+        height: calc(100dvh - 70px);
     }
-    
 
-    /* SEÇÃO TITLE */
     .section-title {
         font-size: var(--font-size-2xl);
         margin-bottom: var(--spacing-2xl);
     }
 
-    /* CARDS */
-    .card-image {
-        height: 150px;
-        font-size: 2rem;
+    /* CARDS mobile */
+    .card-header {
+        height: 180px;
     }
 
     .card-content {
         padding: var(--spacing-md);
     }
 
-    /* GRIDS */
+    /* GRIDS mobile — volta para 1 coluna */
     .promotions-grid,
     .top-products-grid {
         grid-template-columns: 1fr;
     }
 
     .products-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--spacing-md);
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
     }
 
-    /* BOTÕES */
+    /* BOTÕES mobile */
     .btn {
         width: 100%;
         padding: var(--spacing-lg) var(--spacing-md);
         font-size: var(--font-size-sm);
     }
 
-    /* CATEGORIES */
     .categories {
         margin-bottom: var(--spacing-lg);
     }
@@ -273,7 +247,7 @@
         font-size: var(--font-size-sm);
     }
 
-    /* CARRINHO */
+    /* CARRINHO mobile */
     .cart-panel {
         width: 100%;
     }
@@ -291,12 +265,12 @@
         flex-wrap: wrap;
     }
 
-    .cart-item-info {
+    .cart-item-info,
+    .quantity-control {
         width: 100%;
     }
 
     .quantity-control {
-        width: 100%;
         margin-top: var(--spacing-sm);
     }
 
@@ -305,12 +279,11 @@
         padding: var(--spacing-xs) var(--spacing-md);
     }
 
-    /* MODAL */
+    /* MODAL mobile */
     .modal {
         width: 100%;
-        max-height: 100vh;
-        border-radius: 0;
         max-height: calc(100vh - var(--spacing-md));
+        border-radius: 0;
     }
 
     .modal-header {
@@ -325,7 +298,7 @@
         padding: var(--spacing-lg) var(--spacing-md);
     }
 
-    /* FORMULÁRIO */
+    /* FORMULÁRIO mobile */
     .form-fieldset {
         padding: var(--spacing-md);
         margin-bottom: var(--spacing-lg);
@@ -365,12 +338,14 @@
         padding: var(--spacing-md);
     }
 
-    .form-row {
+    .form-row,
+    .form-row-inline {
         grid-template-columns: 1fr;
+        flex-direction: column;
         gap: var(--spacing-md);
     }
 
-    /* TOAST */
+    /* TOAST mobile */
     .toast {
         bottom: var(--spacing-lg);
         right: var(--spacing-lg);
@@ -378,7 +353,7 @@
         max-width: none;
     }
 
-    /* SUMMARY */
+    /* SUMMARY mobile */
     .summary-row {
         font-size: var(--font-size-xs);
     }
@@ -386,23 +361,12 @@
     .summary-total {
         font-size: var(--font-size-base);
     }
-
-    /* NAV LINKS */
-    .cart-button {
-        width: 44px;
-        height: 44px;
-    }
 }
 
-/* XSMALL - 320px */
+/* XSMALL — 360px */
 @media (max-width: 360px) {
-    h1 {
-        font-size: var(--font-size-2xl);
-    }
-
-    h2 {
-        font-size: var(--font-size-xl);
-    }
+    h1 { font-size: var(--font-size-2xl); }
+    h2 { font-size: var(--font-size-xl); }
 
     .products-grid {
         grid-template-columns: 1fr;
@@ -421,15 +385,11 @@
     }
 }
 
-/* ORIENTAÇÃO LANDSCAPE */
+/* LANDSCAPE */
 @media (max-height: 500px) {
     .hero {
         min-height: 250px;
         padding: var(--spacing-lg) 0;
-    }
-
-    .hero-title {
-        font-size: var(--font-size-2xl);
     }
 
     section {
@@ -457,7 +417,7 @@
     }
 }
 
-/* PREFERÊNCIAS DO NAVEGADOR */
+/* ACESSIBILIDADE — redução de movimento */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

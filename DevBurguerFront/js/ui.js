@@ -3,232 +3,261 @@
  * Funções de atualização da interface
  */
 
-/**
- * Renderiza as categorias
- */
+/** Renderiza os botões de categoria no cardápio */
 function renderizarCategorias() {
     ELEMENTS.categoriesContainer.innerHTML = CONFIG.categorias
-        .map(categoria => `
-            <button 
-                class="category-btn ${categoria.id === 'todos' ? 'active' : ''}" 
-                onclick="filtrarPorCategoria('${categoria.id}')"
+        .map(
+            categoria => `
+            <button
+                class="category-btn ${categoria.id === 'todos' ? 'active' : ''}"
+                data-categoria="${categoria.id}"
             >
                 ${categoria.icon} ${categoria.label}
             </button>
-        `)
+        `
+        )
         .join('');
 }
 
 /**
- * Filtra e renderiza produtos por categoria
+ * Filtra e renderiza produtos por categoria.
+ * Usa event delegation — recebe o evento do listener centralizado.
+ * @param {string} categoria
+ * @param {HTMLElement} btnClicado
  */
-function filtrarPorCategoria(categoria) {
+function filtrarPorCategoria(categoria, btnClicado) {
     APP_STATE.categoriaAtiva = categoria;
 
-    // Atualiza botões ativos
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    event.target.classList.add('active');
+    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnClicado) btnClicado.classList.add('active');
 
-    // Renderiza produtos
     renderizarProdutos(categoria);
 }
 
 /**
- * Renderiza os produtos no grid
+ * Renderiza os produtos no grid principal.
+ * @param {string} [categoria='todos']
  */
 function renderizarProdutos(categoria = 'todos') {
     const produtos = getProdutosByCategoria(categoria);
 
     ELEMENTS.productsGrid.innerHTML = produtos
-        .map(produto => `
+        .map(
+            produto => `
             <div class="card">
-                <!-- Cabeçalho do card que agora contém a imagem -->
                 <div class="card-header">
-                    <!-- A propriedade produto.imagem é injetada aqui -->
-                    <img src="${produto.imagem || 'https://via.placeholder.com/300x200/f5f5f5/888888?text=Sem+Foto'}" alt="${produto.nome}" class="card-img-top">
+                    <img
+                        src="${produto.imagem || 'https://via.placeholder.com/300x200/1c1c21/888888?text=Sem+Foto'}"
+                        alt="${produto.nome}"
+                        class="card-img-top"
+                        loading="lazy"
+                    >
                 </div>
-                
-                <!-- Corpo do card com os textos alinhados -->
                 <div class="card-content">
                     <div class="card-text-area">
                         <h3 class="card-title">${produto.nome}</h3>
                         <p class="card-description">${produto.descricao}</p>
                     </div>
-                    
                     <div class="card-footer">
                         <span class="preco">R$ ${produto.preco.toFixed(2)}</span>
-                        <button class="btn btn-primary btn-sm" onclick="adicionarAoCarrinho(${produto.id})">
+                        <button class="btn btn-primary btn-sm" data-action="add" data-id="${produto.id}">
                             <span class="btn-icon">+</span> Add
                         </button>
                     </div>
                 </div>
             </div>
-        `)
+        `
+        )
         .join('');
 }
 
-/**
- * Renderiza as promoções
- */
-function renderizarPromocoes() {
-    ELEMENTS.promotionsGrid.innerHTML = PROMOCOES
-        .map(promo => `
-            <div class="promo-card">
-                <div class="promo-image">${promo.emoji}</div>
-                <div class="promo-content">
-                    <!-- Usamos a nova badge-accent para destacar as tags como HOT DEAL -->
-                    ${promo.tag ? `<span class="badge badge-accent" style="align-self: flex-start; margin-bottom: 8px;">${promo.tag}</span>` : ''}
-                    <h3 class="promo-title">${promo.nome}</h3>
-                    <p class="promo-description">${promo.descricao}</p>
-                    <div class="promo-price">R$ ${promo.preco.toFixed(2)}</div>
-                </div>
-            </div>
-        `)
-        .join('');
-}
-
-/**
- * Renderiza os produtos em destaque
- */
+/** Renderiza os produtos em destaque (Top 3) */
 function renderizarTopProdutos() {
     const topProdutos = getProdutosDestaque(CONFIG.topProducts);
 
+    const medalhas = [
+        { classe: 'medalha-ouro',   icone: '👑 1º Lugar' },
+        { classe: 'medalha-prata',  icone: '🥈 2º Lugar' },
+        { classe: 'medalha-bronze', icone: '🥉 3º Lugar' },
+    ];
+
     ELEMENTS.topProductsGrid.innerHTML = topProdutos
-        .map((produto, indice) => `
-            <div class="card">
-                <div class="card-image">
-                    ${produto.emoji}
-                    <span class="badge badge-primary" style="position: absolute; top: 10px; right: 10px;">
-                        🔥 #${indice + 1}
-                    </span>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">${produto.nome}</h3>
-                    <p class="card-description">${produto.descricao}</p>
-                    <div class="card-footer">
-                        <span class="preco">R$ ${produto.preco.toFixed(2)}</span>
-                        <button class="btn btn-primary btn-sm" onclick="adicionarAoCarrinho(${produto.id})">
-                            Adicionar
-                        </button>
+        .map((produto, indice) => {
+            const medalha = medalhas[indice] || { classe: '', icone: '' };
+            const destaqueTop1 = indice === 0 ? 'card-top-1' : '';
+
+            return `
+                <div class="card card-top-item ${destaqueTop1}">
+                    <div class="card-header">
+                        <img
+                            src="${produto.imagem || 'https://via.placeholder.com/300x200/1c1c21/888888?text=Sem+Foto'}"
+                            alt="${produto.nome}"
+                            class="card-img-top"
+                            loading="lazy"
+                        >
+                        <span class="badge-ranking ${medalha.classe}">${medalha.icone}</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-text-area">
+                            <h3 class="card-title">${produto.nome}</h3>
+                            <p class="card-description">${produto.descricao}</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="preco">R$ ${produto.preco.toFixed(2)}</span>
+                            <button class="btn btn-primary btn-sm btn-comprar-destaque" data-action="add" data-id="${produto.id}">
+                                <span class="btn-icon">🛒</span> Eu Quero!
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `)
+            `;
+        })
         .join('');
 }
 
-/**
- * Abre o carrinho
- */
+/* ============================================================
+   CONTROLES DE VISIBILIDADE (carrinho / checkout)
+   ============================================================ */
+
 function abrirCarrinho() {
     ELEMENTS.cartPanel.classList.add('active');
     ELEMENTS.cartOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
-/**
- * Fecha o carrinho
- */
 function fecharCarrinho() {
     ELEMENTS.cartPanel.classList.remove('active');
     ELEMENTS.cartOverlay.classList.remove('active');
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = '';
 }
 
-/**
- * Abre o modal de checkout
- */
 function abrirCheckout() {
     if (carrinhoGlobal.itens.length === 0) {
         mostrarToast('Adicione itens ao carrinho!', 'error');
         return;
     }
-
     ELEMENTS.checkoutModal.classList.add('active');
     fecharCarrinho();
     document.body.style.overflow = 'hidden';
 }
 
-/**
- * Fecha o modal de checkout
- */
 function fecharCheckout() {
     ELEMENTS.checkoutModal.classList.remove('active');
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = '';
 }
 
+/* ============================================================
+   ATUALIZAÇÃO DO FORMULÁRIO DE CHECKOUT
+   ============================================================ */
+
 /**
- * Atualiza o tipo de entrega
+ * Alterna entre modos de entrega (delivery / retirada),
+ * ajusta campos obrigatórios e recalcula totais.
  */
 function updateDeliveryType() {
     const tipoEntrega = document.querySelector('input[name="deliveryType"]:checked').value;
+    const customerAddressForm = document.getElementById('customerAddressForm');
+    const shopAddressInfo     = document.getElementById('shopAddressInfo');
+    const addressLegend       = document.getElementById('addressLegend');
 
     if (tipoEntrega === 'pickup') {
-        ELEMENTS.addressFieldset.style.display = 'none';
+        customerAddressForm.style.display = 'none';
+        shopAddressInfo.style.display     = 'block';
+        addressLegend.textContent         = '🏪 Endereço para Retirada';
         ELEMENTS.address.removeAttribute('required');
         ELEMENTS.neighborhood.removeAttribute('required');
-        ELEMENTS.deliveryFee.textContent = 'R$ 0,00';
-        ELEMENTS.modalDeliveryFee.textContent = 'R$ 0,00';
     } else {
-        ELEMENTS.addressFieldset.style.display = 'block';
+        customerAddressForm.style.display = 'block';
+        shopAddressInfo.style.display     = 'none';
+        addressLegend.textContent         = '🏠 Endereço de Entrega';
         ELEMENTS.address.setAttribute('required', 'required');
         ELEMENTS.neighborhood.setAttribute('required', 'required');
-        ELEMENTS.deliveryFee.textContent = `R$ ${CONSTANTES.TAXA_ENTREGA.toFixed(2)}`;
-        ELEMENTS.modalDeliveryFee.textContent = `R$ ${CONSTANTES.TAXA_ENTREGA.toFixed(2)}`;
     }
 
+    // Verifica se o troco ainda deve aparecer após a mudança
+    updatePaymentMethod();
+    // Recalcula totais conforme tipo de entrega
     carrinhoGlobal.atualizarResumo();
 }
 
 /**
- * Atualiza o método de pagamento
+ * Exibe ou oculta o campo de troco conforme pagamento e tipo de entrega.
+ * Regra: troco só aparece em pagamento com dinheiro + entrega em domicílio.
  */
 function updatePaymentMethod() {
-    const pagamento = document.querySelector('input[name="payment"]:checked').value;
+    const pagamento   = document.querySelector('input[name="payment"]:checked')?.value ?? '';
+    const tipoEntrega = document.querySelector('input[name="deliveryType"]:checked')?.value ?? 'delivery';
 
-    if (pagamento === 'dinheiro') {
-        ELEMENTS.changeFieldset.style.display = 'block';
+    const mostrarTroco = pagamento === 'dinheiro' && tipoEntrega === 'delivery';
+
+    ELEMENTS.changeFieldset.style.display = mostrarTroco ? 'block' : 'none';
+
+    if (mostrarTroco) {
+        ELEMENTS.changeAmount.addEventListener('input', calcularTroco);
     } else {
-        ELEMENTS.changeFieldset.style.display = 'none';
         ELEMENTS.changeAmount.value = '';
+        document.getElementById('changeResult').style.display = 'none';
+        ELEMENTS.changeAmount.removeEventListener('input', calcularTroco);
     }
 }
 
+/** Calcula e exibe o troco com base no valor digitado */
+function calcularTroco() {
+    const valorDigitado = parseFloat(ELEMENTS.changeAmount.value);
+    const tipoEntrega   = document.querySelector('input[name="deliveryType"]:checked').value;
+    const totalPedido   = carrinhoGlobal.getTotal(tipoEntrega === 'delivery');
+
+    const changeResultDiv      = document.getElementById('changeResult');
+    const calculatedChangeSpan = document.getElementById('calculatedChange');
+
+    if (!isNaN(valorDigitado) && valorDigitado > totalPedido) {
+        calculatedChangeSpan.textContent = formatarMoeda(valorDigitado - totalPedido);
+        changeResultDiv.style.display    = 'block';
+    } else if (!isNaN(valorDigitado) && valorDigitado === totalPedido) {
+        calculatedChangeSpan.textContent = 'Não precisa de troco 😉';
+        changeResultDiv.style.display    = 'block';
+    } else {
+        changeResultDiv.style.display = 'none';
+    }
+}
+
+/* ============================================================
+   UTILITÁRIOS
+   ============================================================ */
+
 /**
- * Mostra notificação toast
+ * Exibe uma notificação toast temporária.
+ * @param {string} mensagem
+ * @param {'success'|'error'|'warning'|'info'} [tipo='success']
  */
 function mostrarToast(mensagem, tipo = 'success') {
     const toast = document.createElement('div');
     toast.className = `toast ${tipo}`;
     toast.textContent = mensagem;
     document.body.appendChild(toast);
-
-    setTimeout(() => {
-        toast.remove();
-    }, CONSTANTES.TEMPO_TOAST);
+    setTimeout(() => toast.remove(), CONSTANTES.TEMPO_TOAST);
 }
 
 /**
- * Adiciona produto ao carrinho
+ * Adiciona um produto ao carrinho (chamado via event delegation).
+ * @param {number} produtoId
  */
 function adicionarAoCarrinho(produtoId) {
     carrinhoGlobal.adicionar(produtoId);
 }
 
 /**
- * Formata valor monetário
+ * Formata um valor numérico como moeda brasileira.
+ * @param {number} valor
+ * @returns {string}
  */
 function formatarMoeda(valor) {
-    return valor.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-    });
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
 /**
- * Valida formulário
+ * Valida o formulário de checkout.
+ * @returns {boolean}
  */
 function validarFormulario() {
     const form = ELEMENTS.checkoutForm;

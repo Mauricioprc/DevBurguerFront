@@ -1,20 +1,17 @@
 /**
  * CHECKOUT.JS
- * Lógica de finalização de pedido
+ * Lógica de finalização de pedido e histórico de pedidos
  */
 
 /**
  * Finaliza o pedido e envia para WhatsApp
+ * @param {Event} event
  */
 async function finalizarPedido(event) {
     event.preventDefault();
 
-    // Valida o formulário
-    if (!validarFormulario()) {
-        return;
-    }
+    if (!validarFormulario()) return;
 
-    // Coleta dados do formulário
     const dados = {
         nome: ELEMENTS.clientName.value.trim(),
         telefone: ELEMENTS.clientPhone.value.trim(),
@@ -26,52 +23,40 @@ async function finalizarPedido(event) {
         troco: ELEMENTS.changeAmount.value ? parseFloat(ELEMENTS.changeAmount.value) : null,
     };
 
-    // Gera o resumo do pedido
     const resumo = carrinhoGlobal.gerarResumo(dados);
-
-    // Codifica a mensagem para URL
     const urlWhatsApp = `https://wa.me/${CONSTANTES.WHATSAPP_NUMERO}?text=${encodeURIComponent(resumo)}`;
 
-    // Abre WhatsApp em nova aba
     window.open(urlWhatsApp, '_blank');
 
-    // Salva pedido no histórico
     salvarPedidoNoHistorico(dados, resumo);
 
-    // Limpa carrinho
     carrinhoGlobal.limpar();
-
-    // Reseta formulário
     ELEMENTS.checkoutForm.reset();
-
-    // Fecha modal
     fecharCheckout();
 
-    // Mostra mensagem de sucesso
     mostrarToast('✅ Pedido enviado com sucesso! Aguarde contato no WhatsApp.');
-
     console.log('📤 Pedido enviado para WhatsApp:', resumo);
 }
 
 /**
- * Salva o pedido no histórico local
+ * Salva o pedido no histórico local (localStorage)
+ * @param {Object} dados
+ * @param {string} resumo
  */
 function salvarPedidoNoHistorico(dados, resumo) {
     try {
-        let historico = JSON.parse(localStorage.getItem('devburger_pedidos')) || [];
+        const historico = recuperarHistoricoPedidos();
 
-        const pedido = {
+        historico.push({
             id: Date.now(),
             data: new Date().toISOString(),
             cliente: dados.nome,
             telefone: dados.telefone,
-            resumo: resumo,
+            resumo,
             status: 'pendente',
-        };
+        });
 
-        historico.push(pedido);
         localStorage.setItem('devburger_pedidos', JSON.stringify(historico));
-
         console.log('💾 Pedido salvo no histórico');
     } catch (e) {
         console.error('Erro ao salvar pedido:', e);
@@ -79,12 +64,12 @@ function salvarPedidoNoHistorico(dados, resumo) {
 }
 
 /**
- * Recupera histórico de pedidos
+ * Retorna o histórico de pedidos do localStorage.
+ * @returns {Array}
  */
 function recuperarHistoricoPedidos() {
     try {
-        const historico = JSON.parse(localStorage.getItem('devburger_pedidos')) || [];
-        return historico;
+        return JSON.parse(localStorage.getItem('devburger_pedidos')) || [];
     } catch (e) {
         console.error('Erro ao recuperar histórico:', e);
         return [];
@@ -92,7 +77,8 @@ function recuperarHistoricoPedidos() {
 }
 
 /**
- * Gera relatório de vendas (para admin)
+ * Gera um relatório de pedidos (útil para fins administrativos).
+ * @returns {Object|null}
  */
 function gerarRelatorioPedidos() {
     const historico = recuperarHistoricoPedidos();
@@ -102,24 +88,19 @@ function gerarRelatorioPedidos() {
         return null;
     }
 
-    const total = historico.length;
-    const dataAtual = new Date();
-    const pedidosHoje = historico.filter(p => {
-        const dataPedido = new Date(p.data);
-        return dataPedido.toDateString() === dataAtual.toDateString();
-    });
+    const hoje = new Date().toDateString();
 
     return {
-        totalPedidos: total,
-        pedidosHoje: pedidosHoje.length,
+        totalPedidos: historico.length,
+        pedidosHoje: historico.filter(p => new Date(p.data).toDateString() === hoje).length,
         pedidosPendentes: historico.filter(p => p.status === 'pendente').length,
         ultimoPedido: historico[historico.length - 1],
-        historico: historico,
+        historico,
     };
 }
 
 /**
- * Exporta pedidos como CSV
+ * Exporta os pedidos como arquivo CSV para download.
  */
 function exportarPedidosCSV() {
     const historico = recuperarHistoricoPedidos();
@@ -129,52 +110,53 @@ function exportarPedidosCSV() {
         return;
     }
 
-    let csv = 'Data,Cliente,Telefone,Status\n';
-
-    historico.forEach(pedido => {
+    const linhas = historico.map(pedido => {
         const data = new Date(pedido.data).toLocaleString('pt-BR');
-        csv += `"${data}","${pedido.cliente}","${pedido.telefone}","${pedido.status}"\n`;
+        return `"${data}","${pedido.cliente}","${pedido.telefone}","${pedido.status}"`;
     });
 
-    // Cria blob e download
+    const csv = `Data,Cliente,Telefone,Status\n${linhas.join('\n')}`;
+
     const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `pedidos_devburger_${new Date().getTime()}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+    const url = URL.createObjectURL(blob);
+    const link = Object.assign(document.createElement('a'), {
+        href: url,
+        download: `pedidos_devburger_${Date.now()}.csv`,
+    });
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 
     console.log('📊 Pedidos exportados em CSV');
 }
 
 /**
- * Formata o número de telefone
+ * Formata um número de telefone no padrão (XX) XXXXX-XXXX.
+ * @param {string} tel
+ * @returns {string}
  */
 function formatarTelefone(tel) {
-    // Remove caracteres não numéricos
-    const apenasNumeros = tel.replace(/\D/g, '');
-
-    // Formata como (XX) XXXXX-XXXX
-    if (apenasNumeros.length === 11) {
-        return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+    const nums = tel.replace(/\D/g, '');
+    if (nums.length === 11) {
+        return `(${nums.slice(0, 2)}) ${nums.slice(2, 7)}-${nums.slice(7)}`;
     }
-
     return tel;
 }
 
 /**
- * Valida número de telefone
+ * Verifica se um número de telefone é válido (10 ou 11 dígitos).
+ * @param {string} tel
+ * @returns {boolean}
  */
 function validarTelefone(tel) {
-    const apenasNumeros = tel.replace(/\D/g, '');
-    return apenasNumeros.length >= 10 && apenasNumeros.length <= 11;
+    const nums = tel.replace(/\D/g, '');
+    return nums.length >= 10 && nums.length <= 11;
 }
 
 /**
- * Debug: Mostra dados do checkout no console
+ * Exibe informações de debug no console (desenvolvimento).
  */
 function debugCheckout() {
     console.group('🐛 DEBUG Checkout');
