@@ -35,48 +35,79 @@ function filtrarPorCategoria(categoria, btnClicado) {
 }
 
 /**
- * Renderiza os produtos no grid principal.
+ * Renderiza os produtos agrupados por categoria (Estilo Prateleira/Netflix).
  * @param {string} [categoria='todos']
  */
 function renderizarProdutos(categoria = 'todos') {
-    const produtos = getProdutosByCategoria(categoria);
+    // Tenta executar a renderização. Se houver erro, captura no console.
+    try {
+        // 1. Filtra as categorias que devem aparecer
+        const categoriasParaRenderizar = categoria === 'todos' 
+            ? CONFIG.categorias.filter(c => c.id !== 'todos') 
+            : CONFIG.categorias.filter(c => c.id === categoria);
 
-    ELEMENTS.productsGrid.innerHTML = produtos
-        .map(
-            produto => `
-            <div class="card">
-                <div class="card-header">
-                    <img
-                        src="${produto.imagem || 'https://via.placeholder.com/300x200/1c1c21/888888?text=Sem+Foto'}"
-                        alt="${produto.nome}"
-                        class="card-img-top"
-                        loading="lazy"
-                    >
-                </div>
-                <div class="card-content">
-                    <div class="card-text-area">
-                        <h3 class="card-title">${produto.nome}</h3>
-                        <p class="card-description">${produto.descricao}</p>
+        let htmlFinal = '';
+
+        // 2. Cria a prateleira para cada categoria listada
+        categoriasParaRenderizar.forEach(cat => {
+            const produtosDaCategoria = getProdutosByCategoria(cat.id);
+
+            // Renderiza apenas se houver produtos vinculados a esta categoria
+            if (produtosDaCategoria && produtosDaCategoria.length > 0) {
+                htmlFinal += `
+                    <div class="category-group">
+                        <h3 class="category-group-title">${cat.icon} ${cat.label}</h3>
+                        
+                        <!-- Container que desliza lateralmente no mobile -->
+                        <div class="products-row">
+                            ${produtosDaCategoria.map(produto => `
+                                <div class="card">
+                                    <div class="card-header">
+                                        <img
+                                            src="${produto.imagem || 'https://via.placeholder.com/300x200/1c1c21/888888?text=Sem+Foto'}"
+                                            alt="${produto.nome}"
+                                            class="card-img-top"
+                                            loading="lazy"
+                                        >
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="card-text-area">
+                                            <h3 class="card-title">${produto.nome}</h3>
+                                            <p class="card-description">${produto.descricao}</p>
+                                        </div>
+                                        <div class="card-footer">
+                                            <span class="preco">R$ ${produto.preco.toFixed(2)}</span>
+                                            <button class="btn btn-primary btn-sm" data-action="add" data-id="${produto.id}">
+                                                <span class="btn-icon">+</span> Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
-                    <div class="card-footer">
-                        <span class="preco">R$ ${produto.preco.toFixed(2)}</span>
-                        <button class="btn btn-primary btn-sm" data-action="add" data-id="${produto.id}">
-                            <span class="btn-icon">+</span> Add
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `
-        )
-        .join('');
+                `;
+            }
+        });
+
+        // 3. Verifica se o container existe na página e injeta o HTML final
+        if (ELEMENTS.productsGrid) {
+            ELEMENTS.productsGrid.innerHTML = htmlFinal;
+        }
+
+    } catch (error) {
+        // Registra o erro no modo desenvolvedor (F12) caso algo falhe
+        console.error("Erro ao renderizar o cardápio:", error);
+    }
 }
+
 
 /** Renderiza os produtos em destaque (Top 3) */
 function renderizarTopProdutos() {
     const topProdutos = getProdutosDestaque(CONFIG.topProducts);
 
     const medalhas = [
-        { classe: 'medalha-ouro',   icone: '👑 1º Lugar' },
+        { classe: 'medalha-ouro',   icone: '🥇 1º Lugar' },
         { classe: 'medalha-prata',  icone: '🥈 2º Lugar' },
         { classe: 'medalha-bronze', icone: '🥉 3º Lugar' },
     ];
@@ -84,10 +115,9 @@ function renderizarTopProdutos() {
     ELEMENTS.topProductsGrid.innerHTML = topProdutos
         .map((produto, indice) => {
             const medalha = medalhas[indice] || { classe: '', icone: '' };
-            const destaqueTop1 = indice === 0 ? 'card-top-1' : '';
-
+            
             return `
-                <div class="card card-top-item ${destaqueTop1}">
+                <div class="card card-top-item">
                     <div class="card-header">
                         <img
                             src="${produto.imagem || 'https://via.placeholder.com/300x200/1c1c21/888888?text=Sem+Foto'}"

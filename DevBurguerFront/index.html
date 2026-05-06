@@ -39,8 +39,14 @@
     <!-- 1. HERO -->
     <section class="hero" id="home">
         <picture class="hero-picture">
-            <source srcset="img/BannerDev.jpeg" media="(min-width: 768px)">
-            <img src="img/BannerDev2.jpeg" alt="Destaque DevBurguer" class="hero-img">
+            <!-- 1º Passo: O navegador verifica se é um Desktop (Telas de 1024px ou maiores) -->
+            <source srcset="img/BannerDev_Desktop.jpeg" media="(min-width: 1050px)">
+            
+            <!-- 2º Passo: Se não for Desktop, verifica se é um Tablet (Telas de 768px até 1023px) -->
+            <source srcset="img/BannerDev_Tablet.jpeg" media="(min-width: 768px)">
+            
+            <!-- 3º Passo: Se a tela for menor que 768px, exibe a imagem Mobile nativa -->
+            <img src="img/BannerDev_Mobile.jpeg" alt="Destaque DevBurguer" class="hero-img">
         </picture>
     </section>
 
@@ -83,28 +89,42 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
+<!-- FOOTER -->
     <footer class="footer">
-        <div class="footer-brand">
-            <span class="logo-text">DevBurguer</span>
-            <p>O melhor burger artesanal da região, feito com paixão e ingredientes selecionados.</p>
-        </div>
-        <div class="footer-links">
-            <h4>Navegação</h4>
-            <div class="social-links">
-                <a href="#home"      class="social-link">Início</a>
-                <a href="#destaques" class="social-link">Destaques</a>
-                <a href="#cardapio"  class="social-link">Cardápio</a>
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <span class="logo-text">DevBurguer</span>
+                <p>O melhor burger artesanal da região, feito com paixão e ingredientes selecionados.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Navegação</h4>
+                <div class="social-links">
+                    <a href="#home" class="social-link">Início</a>
+                    <a href="#destaques" class="social-link">Destaques</a>
+                    <a href="#cardapio" class="social-link">Cardápio</a>
+                </div>
+            </div>
+            <div class="footer-social">
+                <h4>Redes Sociais</h4>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                    <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+                    <a href="#" class="social-link"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                </div>
             </div>
         </div>
-        <div class="footer-social">
-            <h4>Redes Sociais</h4>
-            <div class="social-links">
-                <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i> Instagram</a>
-                <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
-                <a href="#" class="social-link"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+
+        <!-- EMBLEMAS DE PAGAMENTO -->
+        <div class="footer-payments">
+            <p>Formas de Pagamento</p>
+            <div class="payment-icons">
+                <i class="fa-brands fa-pix" title="Pix"></i>
+                <i class="fa-brands fa-cc-visa" title="Visa"></i>
+                <i class="fa-brands fa-cc-mastercard" title="Mastercard"></i>
+                <i class="fa-solid fa-money-bill-wave" title="Dinheiro"></i>
             </div>
         </div>
+
         <div class="footer-bottom">
             <p>&copy; 2026 DevBurguer. Todos os direitos reservados.</p>
         </div>

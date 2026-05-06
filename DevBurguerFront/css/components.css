@@ -59,19 +59,20 @@
     width: 100%;
 }
 
-/* CARDS */
-.card {
-    background-color: var(--color-surface);
-    border-radius: 16px;
-    overflow: hidden;
+/* CARDS PADRONIZADOS */
+.card, .card-top-item {
     display: flex;
     flex-direction: column;
     height: 100%;
-    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    min-height: 100%;
+    background-color: var(--color-surface, #1c1c21);
     border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card:hover {
+.card:hover, .card-top-item:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 30px rgba(255, 107, 0, 0.2);
 }
@@ -84,7 +85,6 @@
     position: relative;
 }
 
-/* Imagem do card — definida uma única vez */
 .card-img-top {
     width: 100%;
     height: 100%;
@@ -92,46 +92,45 @@
     transition: transform var(--transition-slow);
 }
 
-/* Efeito de zoom na foto ao passar o mouse no card */
-.card:hover .card-img-top {
+.card:hover .card-img-top, .card-top-item:hover .card-img-top {
     transform: scale(1.1);
 }
 
-/* Área de Texto */
+/* Área de Texto Flexível */
 .card-content {
-    padding: 24px;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    flex-grow: 1; 
+    padding: 1.5rem;
 }
 
 .card-text-area {
-    margin-bottom: var(--spacing-md);
+    flex-grow: 1; 
+    margin-bottom: 1.2rem;
 }
 
 .card-title {
-    font-size: 1.3rem;
-    color: var(--color-text);
-    margin-bottom: 12px;
+    font-size: 1.25rem;
     font-weight: 700;
-    line-height: 1.2;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
 }
 
 .card-description {
-    font-size: 0.95rem;
     color: var(--color-text-muted);
-    line-height: 1.6;
-    margin-bottom: 24px;
-    flex-grow: 1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    min-height: 85px; 
 }
 
-/* Rodapé do Card */
+/* Rodapé Alinhado */
 .card-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding-top: 18px;
+    margin-top: auto; 
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05); 
 }
 
 .preco {
@@ -140,7 +139,6 @@
     color: var(--color-primary);
 }
 
-/* Botão pequeno do card */
 .btn-sm {
     padding: var(--spacing-xs) var(--spacing-md);
     font-size: var(--font-size-sm);
@@ -364,11 +362,6 @@
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
 }
 
 /* TOAST/NOTIFICAÇÕES */

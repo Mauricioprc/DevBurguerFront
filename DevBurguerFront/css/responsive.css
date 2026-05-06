@@ -2,7 +2,7 @@
    RESPONSIVE - Media Queries
    ============================================ */
 
-/* TABLETS — 768px */
+/* TABLETS E MOBILE — até 768px */
 @media (max-width: 768px) {
     .container {
         padding: 0 var(--spacing-lg);
@@ -47,32 +47,6 @@
         margin: var(--spacing-sm) auto 0 auto;
     }
 
-    /* GRIDS — carrossel horizontal no tablet */
-    .products-grid {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding-bottom: var(--spacing-lg);
-        padding-left: var(--spacing-xs);
-        padding-right: var(--spacing-xs);
-        gap: var(--spacing-md);
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
-        align-items: stretch;
-    }
-
-    .products-grid::-webkit-scrollbar {
-        display: none;
-    }
-
-    .products-grid .card {
-        flex: 0 0 75%;
-        max-width: 280px;
-        scroll-snap-align: center;
-    }
-
     .cart-panel {
         width: 100%;
         max-width: 100%;
@@ -101,9 +75,93 @@
     .form-fieldset {
         padding: var(--spacing-md);
     }
+
+    /* ===================================================
+       CARDÁPIO NETFLIX STYLE (TABLETS E MOBILE)
+       =================================================== */
+       
+    /* Esconde os botões de filtro no mobile/tablet */
+    .categories {
+        display: none !important;
+    }
+
+    /* Ajusta tamanho do título da prateleira */
+    .category-group-title {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Transforma os Grids (Queridinhos e Cardápio) em Carrossel Horizontal */
+    #topProductsGrid, 
+    .products-row {
+        display: flex !important; 
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
+        align-items: stretch !important; /* Garante a mesma altura para os cards */
+        
+        /* Espaçamentos e margens */
+        gap: 1rem;
+        padding-bottom: 1.5rem; 
+        padding-left: 1rem;
+        padding-right: 1rem;
+        margin-left: -1rem; 
+        margin-right: -1rem;
+        
+        /* Comportamento de rolagem suave para touch */
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;  /* Esconde scroll no Firefox */
+        -ms-overflow-style: none; /* Esconde scroll no IE/Edge */
+    }
+
+    /* Esconde a barra de rolagem no Chrome/Safari */
+    #topProductsGrid::-webkit-scrollbar,
+    .products-row::-webkit-scrollbar {
+        display: none; 
+    }
+
+    /* Configuração da largura dos cards dentro do carrossel */
+    #topProductsGrid .card-top-item, 
+    .products-row .card {
+        flex: 0 0 85% !important; 
+        max-width: 85% !important;
+        scroll-snap-align: center; 
+    }
+
+    /* FOOTER TABLET */
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+    
+    .footer-brand {
+        grid-column: span 2; 
+        text-align: left; /* Garante que não fique centralizado esquisito */
+    }
+    
+    .footer-brand p {
+        max-width: 100%;
+        margin: 0; 
+    }
+    
+    /* Alinha o resto à esquerda para ficar organizado */
+    .footer-links, .footer-social {
+        justify-self: start; 
+        text-align: left;
+    }
+
+    .footer-social h4::after,
+    .footer-links h4::after {
+        left: 0;
+        transform: none;
+    }
+
+    .social-links {
+        align-items: flex-start; 
+    }
 }
 
-/* MOBILE — 576px */
+/* SMARTPHONES PEQUENOS — até 576px */
 @media (max-width: 576px) {
     :root {
         --font-size-base: 15px;
@@ -219,31 +277,10 @@
         padding: var(--spacing-md);
     }
 
-    /* GRIDS mobile — volta para 1 coluna */
-    .promotions-grid,
-    .top-products-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .products-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: var(--spacing-lg);
-    }
-
     /* BOTÕES mobile */
     .btn {
         width: 100%;
         padding: var(--spacing-lg) var(--spacing-md);
-        font-size: var(--font-size-sm);
-    }
-
-    .categories {
-        margin-bottom: var(--spacing-lg);
-    }
-
-    .category-btn {
-        padding: var(--spacing-md);
         font-size: var(--font-size-sm);
     }
 
@@ -338,13 +375,6 @@
         padding: var(--spacing-md);
     }
 
-    .form-row,
-    .form-row-inline {
-        grid-template-columns: 1fr;
-        flex-direction: column;
-        gap: var(--spacing-md);
-    }
-
     /* TOAST mobile */
     .toast {
         bottom: var(--spacing-lg);
@@ -361,20 +391,39 @@
     .summary-total {
         font-size: var(--font-size-base);
     }
+
+   /* FOOTER MOBILE */
+    .footer-container {
+        grid-template-columns: 1fr; 
+        text-align: center;
+        gap: 40px;
+    }
+    
+    .footer-brand {
+        grid-column: span 1; 
+    }
+
+    .footer-links, .footer-social {
+        justify-self: center; 
+        text-align: center;
+    }
+
+    /* Centraliza a linha decorativa no mobile */
+    .footer-social h4::after,
+    .footer-links h4::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .social-links {
+        align-items: center; 
+    }
 }
 
 /* XSMALL — 360px */
 @media (max-width: 360px) {
     h1 { font-size: var(--font-size-2xl); }
     h2 { font-size: var(--font-size-xl); }
-
-    .products-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .categories {
-        flex-wrap: nowrap;
-    }
 
     .payment-options {
         grid-template-columns: 1fr;
@@ -428,3 +477,35 @@
         scroll-behavior: auto !important;
     }
 }
+
+/* FOOTER TABLET */
+    .footer-container {
+        grid-template-columns: 1fr 1fr; /* Transforma em 2 colunas */
+        gap: 30px;
+    }
+    
+    .footer-brand {
+        grid-column: span 2; /* A marca ocupa a primeira linha inteira sozinha */
+        text-align: center;
+    }
+    
+    .footer-brand p {
+        max-width: 500px;
+        margin: 0 auto; /* Centraliza o texto da descrição */
+    }
+    
+    /* Centraliza a linha decorativa abaixo dos títulos no Tablet */
+    .footer-social h4::after,
+    .footer-links h4::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Centraliza as listas de links */
+    .footer-links, .footer-social {
+        text-align: center;
+    }
+
+    .social-links {
+        align-items: center; 
+    }
