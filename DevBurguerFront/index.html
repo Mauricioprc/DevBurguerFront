@@ -154,7 +154,7 @@
                     <span id="total">R$ 0,00</span>
                 </div>
             </div>
-            <button class="btn btn-primary btn-block" id="checkoutBtn">
+            <button class="btn btn-carrinho btn-block" id="checkoutBtn">
                 Finalizar Pedido
             </button>
         </div>
@@ -178,12 +178,12 @@
                         <legend class="form-legend">👤 Dados do Cliente</legend>
                         <div class="form-group">
                             <label for="clientName" class="form-label">Nome Completo *</label>
-                            <input type="text" id="clientName" class="form-input" placeholder="Seu nome" required>
+                            <input type="text" id="clientName" class="form-input" placeholder="Seu nome" minlength="3" maxlength="50" required>
                         </div>
-                        <div class="form-group">
-                            <label for="clientPhone" class="form-label">Telefone *</label>
-                            <input type="tel" id="clientPhone" class="form-input" placeholder="(11) 99999-9999" required>
-                        </div>
+                            <div class="form-group">
+                                <label for="clientPhone" class="form-label">Telefone *</label>
+                                <input type="tel" id="clientPhone" class="form-input" placeholder="(11) 99999-9999" required>
+                            </div>
                     </fieldset>
 
                     <!-- TIPO DE ENTREGA -->

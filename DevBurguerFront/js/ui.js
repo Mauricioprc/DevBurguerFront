@@ -286,17 +286,43 @@ function formatarMoeda(valor) {
 }
 
 /**
- * Valida o formulário de checkout.
- * @returns {boolean}
+ * Valida o formulário de checkout antes de enviar o pedido.
+ * Verifica validade padrão do HTML, regras de tamanho de nome e telefone.
+ * @returns {boolean} Retorna true se tudo estiver correto, ou false se houver erro.
  */
 function validarFormulario() {
     const form = ELEMENTS.checkoutForm;
 
+    // 1. Validação padrão do HTML
     if (!form.checkValidity()) {
         form.reportValidity();
         return false;
     }
 
+    // 2. Validação do Nome (Mínimo de 3 caracteres)
+    const nome = ELEMENTS.clientName.value.trim();
+    if (nome.length < 3) {
+        mostrarToast('O nome deve ter pelo menos 3 letras.', 'error');
+        ELEMENTS.clientName.focus();
+        return false;
+    }
+
+    // 3. Validação do Telefone
+    const telefoneDigitado = ELEMENTS.clientPhone.value;
+    const telefonePuro = telefoneDigitado.replace(/\D/g, ''); 
+
+    // Ferramenta educativa: Isso vai imprimir no painel F12 do navegador o que o JS está lendo
+    console.log("Tentativa de Envio - Telefone digitado:", telefoneDigitado);
+    console.log("Quantidade de números identificada:", telefonePuro.length);
+
+    // Regra: O telefone puro (só números) deve ter 10 (fixo) ou 11 (celular)
+    if (telefonePuro.length < 10 || telefonePuro.length > 11) {
+        mostrarToast('Telefone incompleto. Digite o DDD e o número.', 'error');
+        ELEMENTS.clientPhone.focus(); 
+        return false; // 🛑 Este é o freio absoluto. Ele impede o código de ir para o checkout.js!
+    }
+
+    // 4. Validação de Endereço (Modo Delivery)
     const tipoEntrega = document.querySelector('input[name="deliveryType"]:checked').value;
     if (tipoEntrega === 'delivery') {
         if (!ELEMENTS.address.value.trim() || !ELEMENTS.neighborhood.value.trim()) {
@@ -305,7 +331,8 @@ function validarFormulario() {
         }
     }
 
-    return true;
+    // Se chegou até aqui, tudo está 100% correto.
+    return true; 
 }
 
 console.log('✅ UI.js carregado com sucesso');

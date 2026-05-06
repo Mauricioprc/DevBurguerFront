@@ -9,7 +9,7 @@ const CONFIG = {
         nome: 'DevBurguer',
         telefone: '(15) 3333-3333',
         endereco: 'Rua Principal, 123 - Centro',
-        whatsapp: '5515999999999', // Altere para seu número
+        whatsapp: '5511977097728', 
     },
 
     // Entrega

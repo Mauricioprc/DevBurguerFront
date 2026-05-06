@@ -84,8 +84,7 @@ devburger-refactored/
 ```javascript
 const CONFIG = {
     lanchonete: {
-        whatsapp: '5515999999999', // ← ALTERE AQUI
-        // ...
+        whatsapp: '5511977097728',
     },
 };
 ```

@@ -133,16 +133,26 @@ function exportarPedidosCSV() {
 }
 
 /**
- * Formata um número de telefone no padrão (XX) XXXXX-XXXX.
+ * Formata um número de telefone dinamicamente no padrão (XX) XXXXX-XXXX.
+ * Remove automaticamente letras e caracteres especiais.
  * @param {string} tel
  * @returns {string}
  */
 function formatarTelefone(tel) {
-    const nums = tel.replace(/\D/g, '');
-    if (nums.length === 11) {
-        return `(${nums.slice(0, 2)}) ${nums.slice(2, 7)}-${nums.slice(7)}`;
-    }
-    return tel;
+    // 1. Remove absolutamente tudo que não for número (bloqueia letras)
+    let nums = tel.replace(/\D/g, '');
+    
+    // 2. Limita a quantidade máxima de números a 11
+    nums = nums.slice(0, 11);
+
+    // 3. Aplica a máscara progressivamente enquanto o usuário digita
+    if (nums.length === 0) return '';
+    if (nums.length <= 2) return `(${nums}`;
+    if (nums.length <= 6) return `(${nums.slice(0, 2)}) ${nums.slice(2)}`;
+    if (nums.length <= 10) return `(${nums.slice(0, 2)}) ${nums.slice(2, 6)}-${nums.slice(6)}`;
+    
+    // Retorna o formato completo: (11) 99999-9999
+    return `(${nums.slice(0, 2)}) ${nums.slice(2, 7)}-${nums.slice(7)}`;
 }
 
 /**
