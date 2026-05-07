@@ -26,6 +26,7 @@ const CONFIG = {
         { id: 'todos', label: 'Todos', icon: '📋' },
         { id: 'tradicionais', label: 'Tradicionais', icon: '🍔' },
         { id: 'gourmet', label: 'Gourmet', icon: '🥓' },
+        { id: 'combos', label: 'Combos Épicos', icon: '🔥' }, 
         { id: 'bebidas', label: 'Bebidas', icon: '🥤' },
         { id: 'sucos', label: 'Sucos', icon: '🧃' },
         { id: 'alcoolicas', label: 'Cervejas', icon: '🍺' },

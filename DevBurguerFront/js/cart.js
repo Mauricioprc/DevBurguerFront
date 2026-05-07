@@ -37,7 +37,6 @@ class Carrinho {
         const produto = getProdutoById(produtoId);
         if (!produto) return;
 
-        // Ao invés de somar quantidade, criamos um item novo sempre para permitir customizações separadas
         const uniqueCartId = `${produtoId}-${Date.now()}`;
 
         this.itens.push({
@@ -46,27 +45,24 @@ class Carrinho {
             nome: produto.nome,
             preco: produto.preco,
             emoji: produto.emoji,
+            categoria: produto.categoria || '', 
             quantidade: 1,
-            adicionais: [], // Lista de IDs de adicionais escolhidos
-            observacao: ''  // Texto de observação
+            adicionais: [], 
+            observacao: ''  
         });
 
         this.salvarNoLocal();
         this.atualizar();
         mostrarToast(`${produto.nome} adicionado ao carrinho!`);
-        
-        // UX: Abre o carrinho automaticamente para o cliente ver e já poder customizar
         abrirCarrinho();
     }
 
-    /** Remove um item do carrinho pelo índice */
     remover(indice) {
         this.itens.splice(indice, 1);
         this.salvarNoLocal();
         this.atualizar();
     }
 
-    /** Altera a quantidade de um item */
     alterarQuantidade(indice, quantidade) {
         if (quantidade <= 0) {
             this.remover(indice);
@@ -77,24 +73,20 @@ class Carrinho {
         }
     }
     
-    /** Marca ou desmarca um adicional em um item específico */
     toggleAdicional(indice, adicionalId, isChecked) {
         const item = this.itens[indice];
         if (!item) return;
 
         if (isChecked) {
-            // Adiciona se não existir
             if (!item.adicionais.includes(adicionalId)) item.adicionais.push(adicionalId);
         } else {
-            // Remove se desmarcado
             item.adicionais = item.adicionais.filter(id => id !== adicionalId);
         }
         
         this.salvarNoLocal();
-        this.atualizar(true); // O parâmetro true indica que não queremos perder o estado visual do HTML
+        this.atualizar(true); 
     }
 
-    /** Atualiza o texto de observação */
     atualizarObservacao(indice, texto) {
         const item = this.itens[indice];
         if (!item) return;
@@ -102,23 +94,19 @@ class Carrinho {
         this.salvarNoLocal();
     }
 
-    /** Esvazia o carrinho */
     limpar() {
         this.itens = [];
         this.salvarNoLocal();
         this.atualizar();
     }
 
-    /** Retorna o subtotal base (lanche) + o valor dos adicionais escolhidos */
     getSubtotal() {
         return this.itens.reduce((total, item) => {
-            // Soma o preço de todos os adicionais desse item
             const valorAdicionais = item.adicionais.reduce((soma, addId) => {
                 const addObj = ADICIONAIS_DISPONIVEIS.find(a => a.id === addId);
                 return soma + (addObj ? addObj.preco : 0);
             }, 0);
 
-            // Preço final do item = (preço base + adicionais) multiplicados pela quantidade
             const precoItem = (item.preco + valorAdicionais) * item.quantidade;
             return total + precoItem;
         }, 0);
@@ -141,19 +129,16 @@ class Carrinho {
         try {
             const dados = localStorage.getItem('devburger_carrinho');
             this.itens = dados ? JSON.parse(dados) : [];
-            // Tratativa para pedidos antigos que não tinham adicionais no localStorage
             this.itens.forEach(item => {
                 if (!item.adicionais) item.adicionais = [];
                 if (!item.observacao) item.observacao = '';
+                if (!item.categoria) item.categoria = ''; // Proteção para pedidos antigos
             });
         } catch (e) {
             this.itens = [];
         }
     }
 
-    /**
-     * @param {boolean} manterEstado - Se true, mantemos as abas abertas enquanto o usuário clica
-     */
     atualizar(manterEstado = false) {
         this.atualizarContagem();
         this.atualizarItens(manterEstado);
@@ -174,27 +159,41 @@ class Carrinho {
             return;
         }
 
-        // UX: Mapeia quais "details" estavam abertos para não fecharem ao clicar num checkbox
         const openStates = Array.from(document.querySelectorAll('.cart-item-customization')).map(el => el.open);
 
         ELEMENTS.cartItems.innerHTML = this.itens.map((item, indice) => {
-            // Calcula o preço final do item para exibição
+
+            // Tenta pegar a categoria salva. Se for nula, busca do banco de dados (getProdutoById)
+            const produtoReal = getProdutoById(item.id);
+            const categoriaItem = (item.categoria || (produtoReal ? produtoReal.categoria : '')).toLowerCase();            
+            // LISTA DE BLOQUEIO: Se a categoria do produto estiver aqui, esconde os adicionais!
+            const categoriasBloqueadas = ['bebida', 'suco', 'cerveja', 'milkshake', 'sobremesa', 'alcool', 'chopp'];            
+            // Verifica se a categoria do item atual NÃO está na lista bloqueada
+            const ehCategoriaBloqueada = categoriasBloqueadas.some(palavraBloqueada => categoriaItem.includes(palavraBloqueada));     
+            
+            const aceitaAdicionais = !ehCategoriaBloqueada;   
+            
+            // -------------------------------------------------------------
+
             const valorAdicionais = item.adicionais.reduce((soma, addId) => {
                 const obj = ADICIONAIS_DISPONIVEIS.find(a => a.id === addId);
                 return soma + (obj ? obj.preco : 0);
             }, 0);
             const precoDisplay = (item.preco + valorAdicionais) * item.quantidade;
 
-            // Gera os checkboxes de adicionais
-            const checkboxesHtml = ADICIONAIS_DISPONIVEIS.map(add => {
-                const isChecked = item.adicionais.includes(add.id) ? 'checked' : '';
-                return `
-                    <label class="addon-label">
-                        <input type="checkbox" class="addon-checkbox" data-index="${indice}" value="${add.id}" ${isChecked}>
-                        ${add.nome} (+R$ ${add.preco.toFixed(2)})
-                    </label>
-                `;
-            }).join('');
+            // Só desenha os checkboxes se "aceitaAdicionais" for verdadeiro
+            let checkboxesHtml = '';
+            if (aceitaAdicionais) {
+                checkboxesHtml = ADICIONAIS_DISPONIVEIS.map(add => {
+                    const isChecked = item.adicionais.includes(add.id) ? 'checked' : '';
+                    return `
+                        <label class="addon-label">
+                            <input type="checkbox" class="addon-checkbox" data-index="${indice}" value="${add.id}" ${isChecked}>
+                            ${add.nome} (+R$ ${add.preco.toFixed(2)})
+                        </label>
+                    `;
+                }).join('');
+            }
 
             return `
             <div class="cart-item">
@@ -211,27 +210,23 @@ class Carrinho {
                     <button class="remove-btn" data-action="remove" data-index="${indice}">🗑️</button>
                 </div>
                 
-                <!-- Área expansível de customização -->
                 <details class="cart-item-customization" ${manterEstado && openStates[indice] ? 'open' : ''}>
-                    <summary>Personalizar (Adicionais e Obs)</summary>
-                    <div class="addons-list">
-                        ${checkboxesHtml}
-                    </div>
-                    <textarea class="obs-input" data-index="${indice}" placeholder="Alguma observação? (ex: Sem salada, mal passado...)">${item.observacao}</textarea>
+                    
+                    <summary>Personalizar ${aceitaAdicionais ? '(Adicionais e Obs)' : '(Observação)'}</summary>
+                    
+                    ${aceitaAdicionais ? `<div class="addons-list">${checkboxesHtml}</div>` : ''}
+                    
+                    <textarea class="obs-input" data-index="${indice}" placeholder="${aceitaAdicionais ? 'Alguma observação? (ex: Sem salada, mal passado...)' : 'Alguma observação? '}">${item.observacao}</textarea>
                 </details>
             </div>
             `;
         }).join('');
 
         ELEMENTS.checkoutBtn.disabled = false;
-        
-        // Liga os eventos para os checkboxes criados e textarea
         this.configurarEventosCustomizacao();
     }
     
-    /** Registra cliques e inputs nas opções que acabamos de gerar na tela */
     configurarEventosCustomizacao() {
-        // Eventos dos checkboxes
         document.querySelectorAll('.addon-checkbox').forEach(chk => {
             chk.addEventListener('change', (e) => {
                 const indice = e.target.dataset.index;
@@ -240,7 +235,6 @@ class Carrinho {
             });
         });
 
-        // Eventos das observações (salva ao digitar/sair do campo)
         document.querySelectorAll('.obs-input').forEach(input => {
             input.addEventListener('change', (e) => {
                 const indice = e.target.dataset.index;
@@ -274,7 +268,6 @@ class Carrinho {
         if (ELEMENTS.modalDeliveryFee) ELEMENTS.modalDeliveryFee.parentElement.style.display = displayRow;
     }
 
-    /** Inclui os adicionais e observações no gerador para o WhatsApp */
     gerarResumo(dados) {
         let mensagem = `*PEDIDO DevBurguer* 🔥\n\n`;
         mensagem += `👤 *Cliente:* ${dados.nome}\n`;
@@ -290,7 +283,6 @@ class Carrinho {
             
             mensagem += `\n${item.emoji} *${item.quantidade}x ${item.nome}* - R$ ${totalItem}\n`;
             
-            // Adiciona lista de extras se houver
             if (item.adicionais.length > 0) {
                 const nomesAdd = item.adicionais.map(addId => {
                     const obj = ADICIONAIS_DISPONIVEIS.find(a => a.id === addId);
@@ -299,7 +291,6 @@ class Carrinho {
                 mensagem += `   ➕ Adicionais: ${nomesAdd}\n`;
             }
             
-            // Adiciona a observação se houver
             if (item.observacao.trim() !== '') {
                 mensagem += `   📝 Obs: ${item.observacao}\n`;
             }

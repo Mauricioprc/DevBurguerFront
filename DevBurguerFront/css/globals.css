@@ -61,14 +61,6 @@ section {
     padding: var(--spacing-4xl) 0;
 }
 
-section:nth-child(even) {
-    background-color: var(--color-white);
-}
-
-section:nth-child(odd) {
-    background-color: var(--color-light);
-}
-
 /* SECTION TITLE */
 .section-title {
     text-align: center;

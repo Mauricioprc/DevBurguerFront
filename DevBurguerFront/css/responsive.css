@@ -136,28 +136,28 @@
     
     .footer-brand {
         grid-column: span 2; 
-        text-align: left; /* Garante que não fique centralizado esquisito */
+        text-align: center; /* Centraliza a logo e texto no tablet */
     }
     
     .footer-brand p {
-        max-width: 100%;
-        margin: 0; 
+        max-width: 80%;
+        margin: 0 auto; 
     }
     
-    /* Alinha o resto à esquerda para ficar organizado */
     .footer-links, .footer-social {
-        justify-self: start; 
-        text-align: left;
+        justify-self: center; 
+        text-align: center;
     }
 
+    /* Centraliza a linhazinha vermelha dos títulos */
     .footer-social h4::after,
     .footer-links h4::after {
-        left: 0;
-        transform: none;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .social-links {
-        align-items: flex-start; 
+        align-items: center; 
     }
 }
 
@@ -477,35 +477,3 @@
         scroll-behavior: auto !important;
     }
 }
-
-/* FOOTER TABLET */
-    .footer-container {
-        grid-template-columns: 1fr 1fr; /* Transforma em 2 colunas */
-        gap: 30px;
-    }
-    
-    .footer-brand {
-        grid-column: span 2; /* A marca ocupa a primeira linha inteira sozinha */
-        text-align: center;
-    }
-    
-    .footer-brand p {
-        max-width: 500px;
-        margin: 0 auto; /* Centraliza o texto da descrição */
-    }
-    
-    /* Centraliza a linha decorativa abaixo dos títulos no Tablet */
-    .footer-social h4::after,
-    .footer-links h4::after {
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    /* Centraliza as listas de links */
-    .footer-links, .footer-social {
-        text-align: center;
-    }
-
-    .social-links {
-        align-items: center; 
-    }

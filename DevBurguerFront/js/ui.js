@@ -61,8 +61,9 @@ function renderizarProdutos(categoria = 'todos') {
                         <!-- Container que desliza lateralmente no mobile -->
                         <div class="products-row">
                             ${produtosDaCategoria.map(produto => `
-                                <div class="card">
+                                <div class="card ${produto.promo ? 'card-promo' : ''}">
                                     <div class="card-header">
+                                        ${produto.tag ? `<span class="badge-promo">${produto.tag}</span>` : ''}
                                         <img
                                             src="${produto.imagem || 'https://via.placeholder.com/300x200/1c1c21/888888?text=Sem+Foto'}"
                                             alt="${produto.nome}"
@@ -72,7 +73,7 @@ function renderizarProdutos(categoria = 'todos') {
                                     </div>
                                     <div class="card-content">
                                         <div class="card-text-area">
-                                            <h3 class="card-title">${produto.nome}</h3>
+                                            <h3 class="card-title">${produto.emoji} ${produto.nome}</h3>
                                             <p class="card-description">${produto.descricao}</p>
                                         </div>
                                         <div class="card-footer">
@@ -307,19 +308,15 @@ function validarFormulario() {
         return false;
     }
 
-    // 3. Validação do Telefone
+    // 3. Validação do Telefone (Apenas Celular/WhatsApp)
     const telefoneDigitado = ELEMENTS.clientPhone.value;
     const telefonePuro = telefoneDigitado.replace(/\D/g, ''); 
 
-    // Ferramenta educativa: Isso vai imprimir no painel F12 do navegador o que o JS está lendo
-    console.log("Tentativa de Envio - Telefone digitado:", telefoneDigitado);
-    console.log("Quantidade de números identificada:", telefonePuro.length);
-
-    // Regra: O telefone puro (só números) deve ter 10 (fixo) ou 11 (celular)
-    if (telefonePuro.length < 10 || telefonePuro.length > 11) {
-        mostrarToast('Telefone incompleto. Digite o DDD e o número.', 'error');
+    // Regra atualizada: Se for DIFERENTE (!==) de 11, dá erro.
+    if (telefonePuro.length !== 11) {
+        mostrarToast('Digite o DDD e o número completo do WhatsApp (11 dígitos).', 'error');
         ELEMENTS.clientPhone.focus(); 
-        return false; // 🛑 Este é o freio absoluto. Ele impede o código de ir para o checkout.js!
+        return false; // Interrompe o envio
     }
 
     // 4. Validação de Endereço (Modo Delivery)
@@ -330,9 +327,148 @@ function validarFormulario() {
             return false;
         }
     }
+    // 5. Validação de Pagamento e Troco
+    const paymentSelect = document.getElementById('paymentMethod');
+    
+    // Se o pagamento for em dinheiro, fazemos a checagem do troco
+    if (paymentSelect && paymentSelect.value === 'dinheiro') {
+        const changeAmountInput = document.getElementById('changeAmount').value;
+        
+        // Só validamos se o cliente digitou algo no troco
+        if (changeAmountInput) {
+            const valorTroco = parseFloat(changeAmountInput);
+            
+            // Pega o texto do Total do Carrinho. 
+            const elementoTotal = document.getElementById('modalTotal'); 
+            
+            if (elementoTotal) {
+                // Transforma o texto "R$ 55,00" no número matemático 55.00
+                const textoTotal = elementoTotal.innerText;
+                const valorTotalPedido = parseFloat(textoTotal.replace('R$', '').replace(',', '.').trim());
+
+                // A mágica acontece aqui: se o troco for menor que o total, BLOQUEIA!
+                if (valorTroco < valorTotalPedido) {
+                    mostrarToast(`Erro: O troco não pode ser menor que o total (R$ ${valorTotalPedido.toFixed(2)}).`, 'error');
+                    document.getElementById('changeAmount').focus();
+                    return false; // Interrompe o envio do pedido!
+                }
+            }
+        }
+    }
 
     // Se chegou até aqui, tudo está 100% correto.
     return true; 
 }
+/**
+ * Feedback em tempo real para o campo de telefone.
+ * Conta os números e avisa o cliente a cada tecla digitada.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const inputTelefone = document.getElementById('clientPhone');
+    const feedbackTelefone = document.getElementById('phoneFeedback');
+
+    if (inputTelefone && feedbackTelefone) {
+        inputTelefone.addEventListener('input', function(e) {
+            const telefonePuro = e.target.value.replace(/\D/g, '');
+            const qtdNumeros = telefonePuro.length;
+
+            if (qtdNumeros === 0) {
+                feedbackTelefone.style.display = 'none';
+                return;
+            }
+
+            feedbackTelefone.style.display = 'block';
+
+            // Nova Lógica: Apenas 11 números importam
+            if (qtdNumeros < 11) {
+                const faltam = 11 - qtdNumeros;
+                feedbackTelefone.style.color = '#ef4444'; // Vermelho
+                feedbackTelefone.innerText = `Faltam ${faltam} número(s) para o WhatsApp.`;
+            
+            } else if (qtdNumeros === 11) {
+                feedbackTelefone.style.color = '#22c55e'; // Verde
+                feedbackTelefone.innerText = `Número de WhatsApp completo! ✔️`;
+            }
+        });
+    }
+});
+
+/**
+ * Alterna a exibição dos campos de Cartão ou Troco 
+ * dependendo da forma de pagamento selecionada.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const paymentMethod = document.getElementById('paymentMethod');
+    const cardTypeContainer = document.getElementById('cardTypeContainer');
+    const changeContainer = document.getElementById('changeContainer');
+
+    if (paymentMethod) {
+        paymentMethod.addEventListener('change', function() {
+            // Primeiro, escondemos os dois campos para resetar a tela
+            cardTypeContainer.style.display = 'none';
+            changeContainer.style.display = 'none';
+
+            // Depois, mostramos apenas o que o cliente escolheu
+            if (this.value === 'cartao') {
+                cardTypeContainer.style.display = 'block';
+            } else if (this.value === 'dinheiro') {
+                changeContainer.style.display = 'block';
+            }
+        });
+    }
+});
+/**
+ * Calcula o troco em tempo real e exibe alertas se o valor for insuficiente.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const inputTroco = document.getElementById('changeAmount');
+    const feedbackTroco = document.getElementById('changeFeedback');
+
+    if (inputTroco && feedbackTroco) {
+        inputTroco.addEventListener('input', function(e) {
+            // Converte o que o cliente digitou em número decimal
+            const valorDigitado = parseFloat(e.target.value);
+
+            // Se o campo estiver vazio ou o valor for inválido, esconde o aviso
+            if (isNaN(valorDigitado) || valorDigitado <= 0) {
+                feedbackTroco.style.display = 'none';
+                return;
+            }
+
+            // ⚠️ ATENÇÃO: Pegamos o Total do Carrinho (Ajuste o 'cart-total' para o ID correto do seu site!)
+            const elementoTotal = document.getElementById('modalTotal'); 
+            
+            if (!elementoTotal) {
+                console.error("Não achei o total do carrinho para calcular o troco!");
+                return;
+            }
+
+            // Limpa o texto "R$ 55,00" e transforma no número 55.00 para fazer a conta
+            const textoTotal = elementoTotal.innerText;
+            const valorTotalPedido = parseFloat(textoTotal.replace('R$', '').replace(',', '.').trim());
+
+            // Mostra o texto de aviso na tela
+            feedbackTroco.style.display = 'block';
+
+            // Fazendo as comparações matemáticas
+            if (valorDigitado < valorTotalPedido) {
+                // Cenário 1: Cliente colocou dinheiro a menos!
+                feedbackTroco.style.color = '#ef4444'; // Vermelho
+                feedbackTroco.innerText = `Valor insuficiente! Faltam R$ ${(valorTotalPedido - valorDigitado).toFixed(2).replace('.', ',')}.`;
+            
+            } else if (valorDigitado === valorTotalPedido) {
+                // Cenário 2: Cliente colocou o valor exato
+                feedbackTroco.style.color = '#eab308'; // Amarelo
+                feedbackTroco.innerText = `Valor exato! Não precisa enviar troco.`;
+            
+            } else {
+                // Cenário 3: Tudo certo, calculamos o troco!
+                const troco = valorDigitado - valorTotalPedido;
+                feedbackTroco.style.color = '#22c55e'; // Verde
+                feedbackTroco.innerText = `O entregador levará R$ ${troco.toFixed(2).replace('.', ',')} de troco.`;
+            }
+        });
+    }
+});
 
 console.log('✅ UI.js carregado com sucesso');

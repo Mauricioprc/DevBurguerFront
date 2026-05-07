@@ -44,16 +44,12 @@ const PRODUTOS = [
     { id: 27, nome: 'Milkshake Chocolate',  preco: 15.00, categoria: 'milkshakes', descricao: 'Copo 400 ML', emoji: '🍫', imagem: 'img/shake-chocolate.jpeg' },
     { id: 28, nome: 'Milkshake Morango',    preco: 15.00, categoria: 'milkshakes', descricao: 'Copo 400 ML', emoji: '🍓', imagem: 'img/shake-morango.jpeg' },
     { id: 29, nome: 'Milkshake Ovomaltine', preco: 15.00, categoria: 'milkshakes', descricao: 'Copo 400 ML', emoji: '🥛', imagem: 'img/shake-ovomaltine.jpeg' },
-];
 
-// ================= PROMOÇÕES E COMBOS =================
-// NOTA: As imagens dos combos (combo-devclassic.jpeg etc.) não existem na pasta img/.
-// Adicione as imagens ou atualize os caminhos antes de usar este array.
-const PROMOCOES = [
-    { id: 'combo1', nome: 'Combo DevClassic',   descricao: 'DevClassic + Fritas c/ Cheddar e Bacon',         preco: 39.90, promo: true, emoji: '🍔🍟', tag: 'HOT DEAL', imagem: 'img/combo-devclassic.jpeg' },
-    { id: 'combo2', nome: 'Combo Bug Spicy',     descricao: 'Bug Spicy + Fritas c/ Cheddar e Bacon',          preco: 43.90, promo: true, emoji: '🌶️🍟', tag: 'COMBO',    imagem: 'img/combo-bug-spicy.jpeg' },
-    { id: 'combo3', nome: 'Combo Byte Burger',   descricao: 'Byte Burger + Fritas c/ Cheddar e Bacon',        preco: 44.90, promo: true, emoji: '🧅🍟', tag: 'OFERTA',   imagem: 'img/combo-byte-burger.jpeg' },
-    { id: 'combo4', nome: 'Combo 404 Not Found', descricao: '404 Burger Not Found + Fritas c/ Cheddar e Bacon', preco: 46.90, promo: true, emoji: '🍖🍟', tag: 'OFERTA', imagem: 'img/combo-404-burger.jpeg' },
+    // ================= PROMOÇÕES E COMBOS =================
+    { id: 30, nome: 'Combo DevClassic',    categoria: 'combos', descricao: 'DevClassic + Fritas c/ Cheddar e Bacon',         preco: 39.90, promo: true, emoji: '🍔🍟', tag: 'COMBO', imagem: 'img/combo-devclassic.jpeg' },
+    { id: 31, nome: 'Combo Bug Spicy',     categoria: 'combos', descricao: 'Bug Spicy + Fritas c/ Cheddar e Bacon',          preco: 43.90, promo: true, emoji: '🌶️🍟', tag: 'COMBO',    imagem: 'img/combo-bug-spicy.jpeg' },
+    { id: 32, nome: 'Combo Byte Burger',   categoria: 'combos', descricao: 'Byte Burger + Fritas c/ Cheddar e Bacon',        preco: 44.90, promo: true, emoji: '🧅🍟', tag: 'COMBO',   imagem: 'img/combo-byte-burger.jpeg' },
+    { id: 33, nome: 'Combo 404 Not Found', categoria: 'combos', descricao: '404 Burger Not Found + Fritas c/ Cheddar e Bacon', preco: 46.90, promo: true, emoji: '🍖🍟', tag: 'COMBO', imagem: 'img/combo-404-burger.jpeg' },
 ];
 
 // ================= FUNÇÕES AUXILIARES =================
