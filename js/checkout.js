@@ -19,13 +19,12 @@ async function finalizarPedido(event) {
         endereco: ELEMENTS.address.value.trim(),
         bairro: ELEMENTS.neighborhood.value.trim(),
         complemento: ELEMENTS.complement.value.trim(),
-        pagamento: document.querySelector('input[name="payment"]:checked').value,
+        pagamento: document.getElementById('paymentMethod').value,
         troco: ELEMENTS.changeAmount.value ? parseFloat(ELEMENTS.changeAmount.value) : null,
     };
 
     const resumo = carrinhoGlobal.gerarResumo(dados);
-    const urlWhatsApp = `https://wa.me/${CONSTANTES.WHATSAPP_NUMERO}?text=${encodeURIComponent(resumo)}`;
-
+    const urlWhatsApp = `https://api.whatsapp.com/send?phone=${CONSTANTES.WHATSAPP_NUMERO}&text=${encodeURIComponent(resumo)}`;
     window.open(urlWhatsApp, '_blank');
 
     salvarPedidoNoHistorico(dados, resumo);

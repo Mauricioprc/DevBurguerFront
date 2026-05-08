@@ -82,9 +82,12 @@ function configurarEventListeners() {
     ELEMENTS.deliveryType.addEventListener('change', updateDeliveryType);
     ELEMENTS.pickupType.addEventListener('change', updateDeliveryType);
 
-    document.querySelectorAll('input[name="payment"]').forEach(input => {
-        input.addEventListener('change', updatePaymentMethod);
-    });
+    const paymentSelect = document.getElementById('paymentMethod');
+    if (paymentSelect) {
+        paymentSelect.addEventListener('change', updatePaymentMethod);
+    };
+
+   
 
     // Formata o telefone enquanto o usuário digita
     ELEMENTS.clientPhone.addEventListener('input', (e) => {

@@ -188,14 +188,15 @@
                     <fieldset class="form-fieldset">
                         <legend class="form-legend">📍 Tipo de Entrega</legend>
                         <div class="radio-group">
-                            <div class="radio-option">
+                            <label class="radio-option" for="deliveryType" tabindex="0">
                                 <input type="radio" id="deliveryType" name="deliveryType" value="delivery" checked>
-                                <label for="deliveryType" class="radio-label">🚚 Entrega em Casa</label>
-                            </div>
-                            <div class="radio-option">
+                                <span class="radio-label">🚚 Entrega em Casa</span>
+                            </label>
+                            
+                            <label class="radio-option" for="pickupType" tabindex="0">
                                 <input type="radio" id="pickupType" name="deliveryType" value="pickup">
-                                <label for="pickupType" class="radio-label">🏪 Retirada</label>
-                            </div>
+                                <span class="radio-label">🏪 Retirada</span>
+                            </label>
                         </div>
                     </fieldset>
 
@@ -236,7 +237,7 @@
                         
                         <div class="form-group">
                             <label for="paymentMethod" class="form-label">Forma de Pagamento *</label>
-                            <select id="paymentMethod" class="form-input" onchange="verificarPagamento()" required>
+                            <select id="paymentMethod" class="form-input" required>
                                 <option value="">Selecione...</option>
                                 <option value="dinheiro">Dinheiro</option>
                                 <option value="cartao">Cartão</option>
@@ -288,11 +289,11 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script src="js/config.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/cart.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/checkout.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/config.js" charset="UTF-8"></script>
+    <script src="js/data.js" charset="UTF-8"></script>
+    <script src="js/cart.js" charset="UTF-8"></script>
+    <script src="js/ui.js" charset="UTF-8"></script>
+    <script src="js/checkout.js" charset="UTF-8"></script>
+    <script src="js/main.js" charset="UTF-8"></script>
 </body>
 </html>
