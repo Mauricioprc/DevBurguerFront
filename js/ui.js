@@ -216,7 +216,7 @@ function updateDeliveryType() {
  * Regra: troco só aparece em pagamento com dinheiro + entrega em domicílio.
  */
 function updatePaymentMethod() {
-    const pagamento   = document.querySelector('input[name="payment"]:checked')?.value ?? '';
+    const pagamento = document.getElementById('paymentMethod')?.value || '';
     const tipoEntrega = document.querySelector('input[name="deliveryType"]:checked')?.value ?? 'delivery';
 
     const mostrarTroco = pagamento === 'dinheiro' && tipoEntrega === 'delivery';
