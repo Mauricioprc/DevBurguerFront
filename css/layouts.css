@@ -557,7 +557,6 @@
 }
 
 .shop-address-info {
-    display: none;
     background: rgba(255, 107, 0, 0.1);
     padding: 15px;
     border-radius: 8px;
@@ -581,7 +580,6 @@
 }
 
 .change-result {
-    display: none;
     margin-top: 15px;
     padding: 12px;
     background: rgba(37, 211, 102, 0.1);

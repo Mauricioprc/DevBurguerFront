@@ -3,52 +3,65 @@
  * Gerenciamento do carrinho de compras com suporte a adicionais e observações.
  */
 
-// 1. Tabela Estática de Adicionais baseada na sua solicitação
+// ─── Tabela de adicionais disponíveis ─────────────────────────────────────────
 const ADICIONAIS_DISPONIVEIS = [
-    { id: 'bacon', nome: 'Bacon', preco: 5.00 },
-    { id: 'cheddar', nome: 'Cheddar', preco: 3.00 },
-    { id: 'ovo', nome: 'Ovo', preco: 2.00 },
-    { id: 'hamburguer', nome: 'Hamburguer', preco: 7.00 },
-    { id: 'mussarela', nome: 'Mussarela', preco: 3.00 },
-    { id: 'presunto', nome: 'Presunto', preco: 3.00 },
-    { id: 'alface', nome: 'Alface', preco: 2.00 },
-    { id: 'milho', nome: 'Milho', preco: 3.00 },
-    { id: 'ervilha', nome: 'Ervilha', preco: 3.00 },
-    { id: 'frango', nome: 'Frango Desfiado', preco: 5.00 },
-    { id: 'catupiry', nome: 'Catupiry', preco: 3.00 },
-    { id: 'calabresa', nome: 'Calabresa', preco: 5.00 },
-    { id: 'contrafile', nome: 'Contra File', preco: 5.00 },
-    { id: 'molhocasa', nome: 'Molho da casa', preco: 2.00 },
-    { id: 'blend', nome: 'Blend 180G', preco: 9.00 },
-    { id: 'onionrings', nome: 'Onion Rings', preco: 5.00 },
-    { id: 'costela', nome: 'Costela Desfiada', preco: 8.00 },
-    { id: 'cebola', nome: 'Cebola Caramelizada', preco: 8.00 },
-    { id: 'barbecue', nome: 'Barbecue', preco: 1.00 }
+    { id: 'bacon',      nome: 'Bacon',              preco: 5.00 },
+    { id: 'cheddar',    nome: 'Cheddar',            preco: 3.00 },
+    { id: 'ovo',        nome: 'Ovo',                preco: 2.00 },
+    { id: 'hamburguer', nome: 'Hamburguer',         preco: 7.00 },
+    { id: 'mussarela',  nome: 'Mussarela',          preco: 3.00 },
+    { id: 'presunto',   nome: 'Presunto',           preco: 3.00 },
+    { id: 'alface',     nome: 'Alface',             preco: 2.00 },
+    { id: 'milho',      nome: 'Milho',              preco: 3.00 },
+    { id: 'ervilha',    nome: 'Ervilha',            preco: 3.00 },
+    { id: 'frango',     nome: 'Frango Desfiado',    preco: 5.00 },
+    { id: 'catupiry',   nome: 'Catupiry',           preco: 3.00 },
+    { id: 'calabresa',  nome: 'Calabresa',          preco: 5.00 },
+    { id: 'contrafile', nome: 'Contra Filé',        preco: 5.00 },
+    { id: 'molhocasa',  nome: 'Molho da Casa',      preco: 2.00 },
+    { id: 'blend',      nome: 'Blend 180g',         preco: 9.00 },
+    { id: 'onionrings', nome: 'Onion Rings',        preco: 5.00 },
+    { id: 'costela',    nome: 'Costela Desfiada',   preco: 8.00 },
+    { id: 'cebola',     nome: 'Cebola Caramelizada',preco: 8.00 },
+    { id: 'barbecue',   nome: 'Barbecue',           preco: 1.00 },
 ];
 
+// FIX: categorias bloqueadas agora usam os IDs exatos de CONFIG.categorias
+// O código original usava strings parciais como 'bebida', 'cerveja', 'alcool'
+// que não batiam com os IDs reais 'bebidas', 'alcoolicas' etc.
+const CATEGORIAS_SEM_ADICIONAIS = new Set(['bebidas', 'sucos', 'alcoolicas', 'milkshakes']);
+
+// ─── Utilitário: calcula o valor dos adicionais de uma lista de IDs ───────────
+// FIX: lógica repetida 3x no código original (getSubtotal, atualizarItens, gerarResumo)
+function calcularValorAdicionais(listaIds) {
+    return listaIds.reduce((soma, addId) => {
+        const add = ADICIONAIS_DISPONIVEIS.find(a => a.id === addId);
+        return soma + (add ? add.preco : 0);
+    }, 0);
+}
+
+// ─── Classe principal do carrinho ─────────────────────────────────────────────
 class Carrinho {
     constructor() {
         this.itens = [];
         this.carregarDoLocal();
     }
 
-    /** Adiciona um novo produto ao carrinho, criando um identificador único para ele */
+    /** Adiciona um produto ao carrinho com identificador único */
     adicionar(produtoId) {
         const produto = getProdutoById(produtoId);
         if (!produto) return;
 
-        const uniqueCartId = `${produtoId}-${Date.now()}`;
-
         this.itens.push({
-            cartId: uniqueCartId,
-            id: produtoId,
-            nome: produto.nome,
-            preco: produto.preco,
-            emoji: produto.emoji,
-            categoria: produto.categoria || '', 
-            quantidade: 1,
-            adicionais: [], 
-            observacao: ''  
+            cartId:    `${produtoId}-${Date.now()}`,
+            id:        produtoId,
+            nome:      produto.nome,
+            preco:     produto.preco,
+            emoji:     produto.emoji,
+            categoria: produto.categoria || '',
+            quantidade:1,
+            adicionais:[],
+            observacao:'',
         });
 
         this.salvarNoLocal();
@@ -72,9 +85,10 @@ class Carrinho {
             this.atualizar();
         }
     }
-    
+
+    // FIX: indice vinha como string do dataset; forçar Number garante o splice correto
     toggleAdicional(indice, adicionalId, isChecked) {
-        const item = this.itens[indice];
+        const item = this.itens[Number(indice)];
         if (!item) return;
 
         if (isChecked) {
@@ -82,13 +96,14 @@ class Carrinho {
         } else {
             item.adicionais = item.adicionais.filter(id => id !== adicionalId);
         }
-        
+
         this.salvarNoLocal();
-        this.atualizar(true); 
+        this.atualizar(true);
     }
 
     atualizarObservacao(indice, texto) {
-        const item = this.itens[indice];
+        // FIX: mesma coerção de tipo que toggleAdicional
+        const item = this.itens[Number(indice)];
         if (!item) return;
         item.observacao = texto;
         this.salvarNoLocal();
@@ -100,26 +115,25 @@ class Carrinho {
         this.atualizar();
     }
 
+    // ─── Cálculos ─────────────────────────────────────────────────────────────
+
     getSubtotal() {
         return this.itens.reduce((total, item) => {
-            const valorAdicionais = item.adicionais.reduce((soma, addId) => {
-                const addObj = ADICIONAIS_DISPONIVEIS.find(a => a.id === addId);
-                return soma + (addObj ? addObj.preco : 0);
-            }, 0);
-
-            const precoItem = (item.preco + valorAdicionais) * item.quantidade;
-            return total + precoItem;
+            // FIX: usa helper em vez de repetir a lógica inline
+            const valorAdicionais = calcularValorAdicionais(item.adicionais);
+            return total + (item.preco + valorAdicionais) * item.quantidade;
         }, 0);
     }
 
     getTotal(comEntrega = true) {
-        const taxa = comEntrega ? CONSTANTES.TAXA_ENTREGA : 0;
-        return this.getSubtotal() + taxa;
+        return this.getSubtotal() + (comEntrega ? CONSTANTES.TAXA_ENTREGA : 0);
     }
 
     getQuantidadeTotal() {
         return this.itens.reduce((total, item) => total + item.quantidade, 0);
     }
+
+    // ─── Persistência ─────────────────────────────────────────────────────────
 
     salvarNoLocal() {
         localStorage.setItem('devburger_carrinho', JSON.stringify(this.itens));
@@ -129,15 +143,18 @@ class Carrinho {
         try {
             const dados = localStorage.getItem('devburger_carrinho');
             this.itens = dados ? JSON.parse(dados) : [];
+            // Garante compatibilidade com pedidos salvos antes desta versão
             this.itens.forEach(item => {
                 if (!item.adicionais) item.adicionais = [];
                 if (!item.observacao) item.observacao = '';
-                if (!item.categoria) item.categoria = ''; // Proteção para pedidos antigos
+                if (!item.categoria)  item.categoria  = '';
             });
-        } catch (e) {
+        } catch {
             this.itens = [];
         }
     }
+
+    // ─── Atualização de UI ────────────────────────────────────────────────────
 
     atualizar(manterEstado = false) {
         this.atualizarContagem();
@@ -151,7 +168,7 @@ class Carrinho {
         ELEMENTS.cartCount.style.display = total > 0 ? 'flex' : 'none';
     }
 
-    /** Constrói o HTML de cada item com a área de opções expansível */
+    /** Constrói o HTML dos itens com área de personalização expansível */
     atualizarItens(manterEstado) {
         if (this.itens.length === 0) {
             ELEMENTS.cartItems.innerHTML = '<div class="cart-empty">Seu carrinho está vazio</div>';
@@ -159,41 +176,34 @@ class Carrinho {
             return;
         }
 
-        const openStates = Array.from(document.querySelectorAll('.cart-item-customization')).map(el => el.open);
+        // Preserva quais <details> estavam abertos antes de re-renderizar
+        const openStates = Array.from(
+            document.querySelectorAll('.cart-item-customization')
+        ).map(el => el.open);
 
         ELEMENTS.cartItems.innerHTML = this.itens.map((item, indice) => {
+            const categoriaItem = (item.categoria || '').toLowerCase();
 
-            // Tenta pegar a categoria salva. Se for nula, busca do banco de dados (getProdutoById)
-            const produtoReal = getProdutoById(item.id);
-            const categoriaItem = (item.categoria || (produtoReal ? produtoReal.categoria : '')).toLowerCase();            
-            // LISTA DE BLOQUEIO: Se a categoria do produto estiver aqui, esconde os adicionais!
-            const categoriasBloqueadas = ['bebida', 'suco', 'cerveja', 'milkshake', 'sobremesa', 'alcool', 'chopp'];            
-            // Verifica se a categoria do item atual NÃO está na lista bloqueada
-            const ehCategoriaBloqueada = categoriasBloqueadas.some(palavraBloqueada => categoriaItem.includes(palavraBloqueada));     
-            
-            const aceitaAdicionais = !ehCategoriaBloqueada;   
-            
-            // -------------------------------------------------------------
+            // FIX: verificação agora usa Set com IDs exatos, em vez de includes com strings parciais
+            const aceitaAdicionais = !CATEGORIAS_SEM_ADICIONAIS.has(categoriaItem);
 
-            const valorAdicionais = item.adicionais.reduce((soma, addId) => {
-                const obj = ADICIONAIS_DISPONIVEIS.find(a => a.id === addId);
-                return soma + (obj ? obj.preco : 0);
-            }, 0);
-            const precoDisplay = (item.preco + valorAdicionais) * item.quantidade;
+            // FIX: usa helper centralizado
+            const valorAdicionais = calcularValorAdicionais(item.adicionais);
+            const precoDisplay    = (item.preco + valorAdicionais) * item.quantidade;
 
-            // Só desenha os checkboxes se "aceitaAdicionais" for verdadeiro
-            let checkboxesHtml = '';
-            if (aceitaAdicionais) {
-                checkboxesHtml = ADICIONAIS_DISPONIVEIS.map(add => {
-                    const isChecked = item.adicionais.includes(add.id) ? 'checked' : '';
+            const checkboxesHtml = aceitaAdicionais
+                ? ADICIONAIS_DISPONIVEIS.map(add => {
+                    const checked = item.adicionais.includes(add.id) ? 'checked' : '';
                     return `
                         <label class="addon-label">
-                            <input type="checkbox" class="addon-checkbox" data-index="${indice}" value="${add.id}" ${isChecked}>
+                            <input type="checkbox" class="addon-checkbox"
+                                data-index="${indice}" value="${add.id}" ${checked}>
                             ${add.nome} (+R$ ${add.preco.toFixed(2)})
-                        </label>
-                    `;
-                }).join('');
-            }
+                        </label>`;
+                }).join('')
+                : '';
+
+            const isOpen = manterEstado && openStates[indice] ? 'open' : '';
 
             return `
             <div class="cart-item">
@@ -209,119 +219,109 @@ class Carrinho {
                     </div>
                     <button class="remove-btn" data-action="remove" data-index="${indice}">🗑️</button>
                 </div>
-                
-                <details class="cart-item-customization" ${manterEstado && openStates[indice] ? 'open' : ''}>
-                    
+
+                <details class="cart-item-customization" ${isOpen}>
                     <summary>Personalizar ${aceitaAdicionais ? '(Adicionais e Obs)' : '(Observação)'}</summary>
-                    
                     ${aceitaAdicionais ? `<div class="addons-list">${checkboxesHtml}</div>` : ''}
-                    
-                    <textarea class="obs-input" data-index="${indice}" placeholder="${aceitaAdicionais ? 'Alguma observação? (ex: Sem salada, mal passado...)' : 'Alguma observação? '}">${item.observacao}</textarea>
+                    <textarea class="obs-input" data-index="${indice}"
+                        placeholder="${aceitaAdicionais ? 'Alguma observação? (ex: Sem salada, mal passado...)' : 'Alguma observação?'}"
+                    >${item.observacao}</textarea>
                 </details>
-            </div>
-            `;
+            </div>`;
         }).join('');
 
         ELEMENTS.checkoutBtn.disabled = false;
-        this.configurarEventosCustomizacao();
+        this._configurarEventosCustomizacao();
     }
-    
-    configurarEventosCustomizacao() {
+
+    /** Vincula eventos aos checkboxes e textareas gerados dinamicamente */
+    _configurarEventosCustomizacao() {
         document.querySelectorAll('.addon-checkbox').forEach(chk => {
-            chk.addEventListener('change', (e) => {
-                const indice = e.target.dataset.index;
-                const addId = e.target.value;
-                this.toggleAdicional(indice, addId, e.target.checked);
+            chk.addEventListener('change', e => {
+                this.toggleAdicional(e.target.dataset.index, e.target.value, e.target.checked);
             });
         });
 
         document.querySelectorAll('.obs-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const indice = e.target.dataset.index;
-                this.atualizarObservacao(indice, e.target.value);
+            input.addEventListener('change', e => {
+                this.atualizarObservacao(e.target.dataset.index, e.target.value);
             });
         });
     }
 
     atualizarResumo() {
-        const subtotal = this.getSubtotal();
-        const taxa = CONSTANTES.TAXA_ENTREGA;
+        const subtotal   = this.getSubtotal();
+        const taxa       = CONSTANTES.TAXA_ENTREGA;
         const inputEntrega = document.querySelector('input[name="deliveryType"]:checked');
         const ehDelivery = inputEntrega ? inputEntrega.value === 'delivery' : true;
-        const total = this.getTotal(ehDelivery);
+        const total      = this.getTotal(ehDelivery);
 
-        const formatado = {
-            subtotal: `R$ ${subtotal.toFixed(2)}`,
-            taxa: `R$ ${taxa.toFixed(2)}`,
-            total: `R$ ${total.toFixed(2)}`,
-        };
+        const fmt = v => `R$ ${v.toFixed(2)}`;
 
-        if (ELEMENTS.subtotal) ELEMENTS.subtotal.textContent = formatado.subtotal;
-        if (ELEMENTS.deliveryFee) ELEMENTS.deliveryFee.textContent = formatado.taxa;
-        if (ELEMENTS.total) ELEMENTS.total.textContent = formatado.total;
-        if (ELEMENTS.modalSubtotal) ELEMENTS.modalSubtotal.textContent = formatado.subtotal;
-        if (ELEMENTS.modalDeliveryFee) ELEMENTS.modalDeliveryFee.textContent = formatado.taxa;
-        if (ELEMENTS.modalTotal) ELEMENTS.modalTotal.textContent = formatado.total;
+        if (ELEMENTS.subtotal)        ELEMENTS.subtotal.textContent        = fmt(subtotal);
+        if (ELEMENTS.deliveryFee)     ELEMENTS.deliveryFee.textContent     = fmt(taxa);
+        if (ELEMENTS.total)           ELEMENTS.total.textContent           = fmt(total);
+        if (ELEMENTS.modalSubtotal)   ELEMENTS.modalSubtotal.textContent   = fmt(subtotal);
+        if (ELEMENTS.modalDeliveryFee)ELEMENTS.modalDeliveryFee.textContent= fmt(taxa);
+        if (ELEMENTS.modalTotal)      ELEMENTS.modalTotal.textContent      = fmt(total);
 
+        // Mostra/oculta a linha de taxa de entrega conforme o tipo selecionado
         const displayRow = ehDelivery ? 'flex' : 'none';
-        if (ELEMENTS.deliveryFee) ELEMENTS.deliveryFee.parentElement.style.display = displayRow;
+        if (ELEMENTS.deliveryFee)      ELEMENTS.deliveryFee.parentElement.style.display      = displayRow;
         if (ELEMENTS.modalDeliveryFee) ELEMENTS.modalDeliveryFee.parentElement.style.display = displayRow;
     }
 
+    /** Monta a mensagem de texto para o WhatsApp */
     gerarResumo(dados) {
-        let mensagem = `*PEDIDO DevBurguer* 🔥\n\n`;
-        mensagem += `👤 *Cliente:* ${dados.nome}\n`;
-        mensagem += `📱 *Telefone:* ${dados.telefone}\n`;
-        mensagem += `\n*📦 ITENS DO PEDIDO:*\n`;
+        let msg = `*PEDIDO DevBurguer* 🔥\n\n`;
+        msg += `👤 *Cliente:* ${dados.nome}\n`;
+        msg += `📱 *Telefone:* ${dados.telefone}\n`;
+        msg += `\n*📦 ITENS DO PEDIDO:*\n`;
 
         this.itens.forEach(item => {
-            const valorAdicionais = item.adicionais.reduce((soma, addId) => {
-                const obj = ADICIONAIS_DISPONIVEIS.find(a => a.id === addId);
-                return soma + (obj ? obj.preco : 0);
-            }, 0);
+            // FIX: usa helper centralizado
+            const valorAdicionais = calcularValorAdicionais(item.adicionais);
             const totalItem = ((item.preco + valorAdicionais) * item.quantidade).toFixed(2);
-            
-            mensagem += `\n${item.emoji} *${item.quantidade}x ${item.nome}* - R$ ${totalItem}\n`;
-            
+
+            msg += `\n${item.emoji} *${item.quantidade}x ${item.nome}* - R$ ${totalItem}\n`;
+
             if (item.adicionais.length > 0) {
-                const nomesAdd = item.adicionais.map(addId => {
-                    const obj = ADICIONAIS_DISPONIVEIS.find(a => a.id === addId);
-                    return obj ? obj.nome : '';
-                }).join(', ');
-                mensagem += `   ➕ Adicionais: ${nomesAdd}\n`;
+                const nomes = item.adicionais
+                    .map(id => ADICIONAIS_DISPONIVEIS.find(a => a.id === id)?.nome ?? '')
+                    .filter(Boolean)
+                    .join(', ');
+                msg += `   ➕ Adicionais: ${nomes}\n`;
             }
-            
-            if (item.observacao.trim() !== '') {
-                mensagem += `   📝 Obs: ${item.observacao}\n`;
+
+            if (item.observacao.trim()) {
+                msg += `   📝 Obs: ${item.observacao}\n`;
             }
         });
 
         const subtotal = this.getSubtotal();
-        const taxa = dados.tipoEntrega === 'delivery' ? CONSTANTES.TAXA_ENTREGA : 0;
-        const total = subtotal + taxa;
+        const taxa     = dados.tipoEntrega === 'delivery' ? CONSTANTES.TAXA_ENTREGA : 0;
+        const total    = subtotal + taxa;
 
-        mensagem += `\n💰 *VALORES:*\n`;
-        mensagem += `Subtotal: R$ ${subtotal.toFixed(2)}\n`;
-        if (taxa > 0) mensagem += `Taxa Entrega: R$ ${taxa.toFixed(2)}\n`;
-        mensagem += `*Total: R$ ${total.toFixed(2)}*\n`;
+        msg += `\n💰 *VALORES:*\n`;
+        msg += `Subtotal: R$ ${subtotal.toFixed(2)}\n`;
+        if (taxa > 0) msg += `Taxa Entrega: R$ ${taxa.toFixed(2)}\n`;
+        msg += `*Total: R$ ${total.toFixed(2)}*\n`;
 
-        mensagem += `\n📍 *ENTREGA:*\n`;
+        msg += `\n📍 *ENTREGA:*\n`;
         if (dados.tipoEntrega === 'delivery') {
-            mensagem += `${dados.endereco}, ${dados.bairro}`;
-            if (dados.complemento) mensagem += `, ${dados.complemento}`;
-            mensagem += `\n`;
+            msg += `${dados.endereco}, ${dados.bairro}`;
+            if (dados.complemento) msg += `, ${dados.complemento}`;
+            msg += `\n`;
         } else {
-            mensagem += `Retirada em Loja\n`;
-            mensagem += `${CONFIG.lanchonete.endereco}\n`;
+            msg += `Retirada em Loja\n${CONFIG.lanchonete.endereco}\n`;
         }
 
-        mensagem += `\n💳 *PAGAMENTO:* ${dados.pagamento.toUpperCase()}\n`;
-
+        msg += `\n💳 *PAGAMENTO:* ${dados.pagamento.toUpperCase()}\n`;
         if (dados.pagamento === 'dinheiro' && dados.troco) {
-            mensagem += `Troco para: R$ ${dados.troco.toFixed(2)}\n`;
+            msg += `Troco para: R$ ${dados.troco.toFixed(2)}\n`;
         }
 
-        return mensagem;
+        return msg;
     }
 }
 

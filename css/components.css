@@ -2,11 +2,13 @@
    COMPONENTES REUTILIZÁVEIS
    ============================================ */
 
-/* BOTÕES */
+/* ─── BOTÕES ────────────────────────────────────────────────────────────── */
+
 .btn {
-    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
-    border-radius: 8px;
-    font-weight: bold;
+    /* FIX: --transition-speed não tinha unit — trocado por --transition-base */
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-bold);
 }
 
 .btn:hover {
@@ -19,22 +21,21 @@
     cursor: not-allowed;
 }
 
-/* VARIANTES DE BOTÃO */
-.btn-primary {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-    color: var(--color-white);
-    box-shadow: var(--shadow-md);
-    
-}
-
+/* Variantes */
+/* FIX: .btn-primary e .btn-carrinho tinham o mesmo gradient duplicado;
+   o gradiente foi centralizado em .btn-primary e .btn-carrinho herda. */
+.btn-primary,
 .btn-carrinho {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
     color: var(--color-white);
     box-shadow: var(--shadow-md);
-    padding: var(--spacing-md) var(--spacing-xl); 
-    font-size: 1.1rem;                            
-    font-weight: 600;                            
-    display: inline-flex;                         
+}
+
+.btn-carrinho {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 1.1rem;
+    font-weight: var(--font-weight-semibold);
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 }
@@ -72,31 +73,39 @@
     width: 100%;
 }
 
-/* CARDS PADRONIZADOS */
-.card, .card-top-item {
+.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-full);
+}
+
+/* ─── CARDS ─────────────────────────────────────────────────────────────── */
+
+.card,
+.card-top-item {
     display: flex;
     flex-direction: column;
     height: 100%;
-    min-height: 100%;
-    background-color: var(--color-surface, #1c1c21);
+    background-color: var(--color-surface);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: var(--radius-lg);
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* FIX: era 0.3s hard-coded; usa a variável correta */
+    transition: transform var(--transition-slow), box-shadow var(--transition-slow);
 }
 
-.card:hover, .card-top-item:hover {
+.card:hover,
+.card-top-item:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 30px rgba(255, 107, 0, 0.2);
 }
 
-/* Área da Imagem */
 .card-header {
     width: 100%;
-    aspect-ratio: 4 / 3; 
+    aspect-ratio: 4 / 3;
     overflow: hidden;
     position: relative;
-    background-color: var(--color-white); 
+    background-color: var(--color-white);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -105,50 +114,49 @@
 .card-img-top {
     width: 100%;
     height: 100%;
-    object-fit: cover; 
-    object-position: center; 
+    object-fit: cover;
+    object-position: center;
     transition: transform var(--transition-slow);
 }
 
-.card:hover .card-img-top, .card-top-item:hover .card-img-top {
-    transform: scale(1.1); 
+.card:hover .card-img-top,
+.card-top-item:hover .card-img-top {
+    transform: scale(1.1);
 }
 
-/* Área de Texto Flexível */
 .card-content {
     display: flex;
     flex-direction: column;
-    flex-grow: 1; 
+    flex-grow: 1;
     padding: 1.5rem;
 }
 
 .card-text-area {
-    flex-grow: 1; 
+    flex-grow: 1;
     margin-bottom: 1.2rem;
 }
 
 .card-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-sm);
     color: var(--color-text);
 }
 
 .card-description {
     color: var(--color-text-muted);
     font-size: 0.9rem;
-    line-height: 1.5;
-    min-height: 85px; 
+    line-height: var(--line-height-normal);
+    min-height: 85px;
 }
 
-/* Rodapé Alinhado */
 .card-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto; 
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05); 
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .preco {
@@ -157,13 +165,8 @@
     color: var(--color-primary);
 }
 
-.btn-sm {
-    padding: var(--spacing-xs) var(--spacing-md);
-    font-size: var(--font-size-sm);
-    border-radius: var(--radius-full);
-}
+/* ─── BADGE ─────────────────────────────────────────────────────────────── */
 
-/* BADGE */
 .badge {
     display: inline-block;
     padding: var(--spacing-xs) var(--spacing-md);
@@ -174,13 +177,28 @@
     letter-spacing: 0.5px;
 }
 
-.badge-primary { background: var(--color-primary); color: var(--color-white); }
+.badge-primary   { background: var(--color-primary);   color: var(--color-white); }
 .badge-secondary { background: var(--color-secondary); color: var(--color-white); }
-.badge-success { background: var(--color-success); color: var(--color-white); }
-.badge-danger { background: var(--color-error); color: var(--color-white); }
-.badge-accent { background: var(--color-accent); color: var(--color-dark); }
+.badge-success   { background: var(--color-success);   color: var(--color-white); }
+.badge-danger    { background: var(--color-error);     color: var(--color-white); }
+.badge-accent    { background: var(--color-accent);    color: var(--color-dark); }
 
-/* FORMULÁRIOS */
+.badge-promo {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: var(--font-size-xs);
+    font-weight: 800;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── FORMULÁRIOS ────────────────────────────────────────────────────────── */
+
 .form-group {
     margin-bottom: 15px;
     display: flex;
@@ -190,7 +208,7 @@
 
 .form-label {
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--color-text-muted);
 }
 
@@ -199,14 +217,14 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--color-text);
     padding: 14px 15px;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
     outline: none;
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
 }
 
 .form-input::placeholder {
-    color: #666666;
+    color: #666;
 }
 
 .form-input:focus {
@@ -215,7 +233,8 @@
     background-color: rgba(0, 0, 0, 0.6);
 }
 
-.form-row {
+.form-row,
+.form-row-inline {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-lg);
@@ -231,14 +250,34 @@
 
 .form-legend {
     color: var(--color-text);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     padding: 0 10px;
     font-size: 1.1rem;
     background-color: var(--color-surface);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 
-/* RÁDIO E CHECKBOX */
+/* Feedback de campo (telefone, troco) */
+.field-feedback {
+    display: block;
+    margin-top: 4px;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-sm);
+}
+
+/* Resultado do cálculo de troco */
+.change-result {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(39, 174, 96, 0.1);
+    border: 1px solid var(--color-success);
+    border-radius: var(--radius-md);
+    color: var(--color-success);
+    font-size: var(--font-size-sm);
+}
+
+/* ─── RÁDIO E CHECKBOX ───────────────────────────────────────────────────── */
+
 .radio-group,
 .payment-options {
     display: flex;
@@ -253,21 +292,21 @@
     min-width: 130px;
     background-color: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 12px;
     display: flex;
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
 }
 
 .radio-option:has(input[type="radio"]:checked),
 .payment-option:has(input[type="radio"]:checked) {
-    border-color: var(--color-primary); /* Borda vermelha da marca */
-    background-color: rgba(255, 58, 68, 0.1); /* Fundo avermelhado bem sutil */
-    box-shadow: 0 0 10px rgba(255, 58, 68, 0.2); /* Sombra suave para destacar */
-    transform: translateY(-2px); /* Efeito de elevação 3D suave */
+    border-color: var(--color-primary);
+    background-color: rgba(255, 58, 68, 0.1);
+    box-shadow: 0 0 10px rgba(255, 58, 68, 0.2);
+    transform: translateY(-2px);
 }
 
 .radio-option:hover,
@@ -287,26 +326,26 @@
 .radio-label,
 .payment-label {
     cursor: pointer;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
 }
 
-/* MODAL */
+/* ─── CHECKOUT — Transformação em Painel Lateral ────────────────────────── */
+
+/* Overlay de fundo  */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     z-index: 3000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     opacity: 0;
     visibility: hidden;
-    transition: all var(--transition-speed) ease;
+    transition: all 0.3s ease;
+    display: block; /* Garante que não usa flex centralizado */
 }
 
 .modal-overlay.active {
@@ -315,42 +354,52 @@
 }
 
 .modal {
+    position: fixed;
+    top: 0;
+    right: -100%; /* Começa fora do ecrã à direita */
+    width: 100%;
+    max-width: 480px; /* Um pouco mais largo que o carrinho para os forms */
+    height: 100vh;
     background-color: var(--color-surface);
-    width: 95%;
-    max-width: 550px;
-    max-height: 90vh;
-    border-radius: 16px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
-    transform: scale(0.95);
-    transition: transform var(--transition-speed) ease;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 3001;
+    transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-radius: 0; /* Remove os cantos arredondados para colar na borda */
+    border: none;
+    transform: none !important; /* Remove o scale da animação antiga */
 }
 
+/* Quando o overlay está ativo, o painel desliza para dentro */
 .modal-overlay.active .modal {
-    transform: scale(1);
+    right: 0;
 }
 
+/* Ajuste do conteúdo interno para scroll */
+.modal-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 25px;
+}
+
+/* Cabeçalho do Checkout igual ao do Carrinho */
 .modal-header {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
     padding: 20px 25px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     background-color: rgba(0, 0, 0, 0.2);
 }
 
 .modal-header h2 {
-    color: var(--color-primary);
+    margin: 0;
     font-size: 1.4rem;
     font-weight: 800;
-    margin: 0;
-}
-
-.modal-content {
-    padding: 25px;
-    overflow-y: auto;
+    color: var(--color-primary);
 }
 
 .close-btn {
@@ -365,78 +414,83 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-speed) ease;
+    transition: all var(--transition-base);
 }
 
 .close-btn:hover {
-    color: #FF3A44;
+    color: var(--color-primary);
     background-color: rgba(255, 58, 68, 0.1);
     transform: rotate(90deg);
 }
 
-/* ANIMAÇÕES */
+/* ─── ANIMAÇÕES ──────────────────────────────────────────────────────────── */
+
 @keyframes fadeIn {
     from { opacity: 0; }
-    to { opacity: 1; }
+    to   { opacity: 1; }
 }
 
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-/* TOAST/NOTIFICAÇÕES */
+/* ─── TOAST ──────────────────────────────────────────────────────────────── */
+.toastify,
+.toastify-popup {
+    display: none !important;
+}
+
 .toast {
-  position: fixed;
-  bottom: var(--spacing-2xl);
-  right: var(--spacing-2xl);
-  background: black; 
-  color: white;      
-  border-left: 4px solid var(--color-primary); 
-  padding: var(--spacing-lg) var(--spacing-2xl);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  z-index: var(--z-tooltip);
-  animation: slideUp var(--transition-slow);
-  max-width: 400px;
+    position: fixed;
+    bottom: var(--spacing-2xl);
+    right: var(--spacing-2xl);
+    background: #111;
+    color: var(--color-white);
+    border-left: 4px solid var(--color-primary);
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: var(--z-tooltip);
+    animation: slideUp var(--transition-slow) forwards;
+    max-width: 400px;
 }
 
-/* =========================================
-   CUSTOMIZAÇÃO NO CARRINHO (Adicionais)
-========================================= */
+.toast.success { border-left-color: var(--color-success); }
+.toast.error   { border-left-color: var(--color-error); }
+.toast.warning { border-left-color: var(--color-warning); }
+.toast.info    { border-left-color: var(--color-info); }
 
-/* Container geral de cada lanche no carrinho */
+/* ─── CARRINHO — ITENS ────────────────────────────────────────────────────── */
+
 .cart-item {
-    background: rgba(255, 255, 255, 0.05); /* Fundo sutil para destacar o card */
-    border: 1px solid rgba(255, 255, 255, 0.08); /* Borda bem leve */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;
-    gap: 12px; 
+    gap: 12px;
 }
 
-/* Linha principal: Nome, Preço, Qtd e Lixeira */
-/* Linha principal: Usaremos CSS Grid para ter controle absoluto do mapa! */
 .cart-item-main {
     display: grid;
-    grid-template-columns: 1fr auto; 
+    grid-template-columns: 1fr auto;
     grid-template-areas:
-        "info info"   
-        "qty remove"; 
+        "info info"
+        "qty  remove";
     gap: 10px;
     align-items: center;
 }
 
-/* Caixa com Nome e Preço */
 .cart-item-info {
-    grid-area: info; /* Diz para o elemento ficar na área "info" do mapa */
+    grid-area: info;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -444,36 +498,35 @@
 
 .cart-item-name {
     font-size: 1.1rem;
-    font-weight: 700;
-    color: #ffffff;
-    line-height: 1.2;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-white);
+    line-height: var(--line-height-tight);
 }
 
 .cart-item-price {
-    color: var(--color-primary, #ff3a44);
+    color: var(--color-primary);
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
-/* Controle de Quantidade (+ / -) */
 .quantity-control {
-    grid-area: qty; 
-    justify-self: start; 
+    grid-area: qty;
+    justify-self: start;
     display: flex;
     align-items: center;
-    background: rgba(0, 0, 0, 0.3); 
-    border-radius: 8px;
-    padding: 4px 10px; 
-    gap: 12px; 
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-md);
+    padding: 4px 10px;
+    gap: 12px;
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .qty-btn {
     background: transparent;
-    color: var(--color-primary, #ff3a44);
+    color: var(--color-primary);
     border: none;
-    font-size: 1.3rem; 
-    width: 28px; 
+    font-size: 1.3rem;
+    width: 28px;
     height: 28px;
     cursor: pointer;
     display: flex;
@@ -483,86 +536,79 @@
 }
 
 .qty-display {
-    font-weight: bold;
-    color: #fff;
-    font-size: 1rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-white);
+    font-size: var(--font-size-base);
     min-width: 20px;
     text-align: center;
 }
 
-/* Botão de Lixeira */
 .remove-btn {
-    grid-area: remove; 
+    grid-area: remove;
     background: rgba(255, 58, 68, 0.1);
     border: 1px solid rgba(255, 58, 68, 0.2);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     width: 38px;
     height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .remove-btn:hover {
-    background: var(--color-primary, #ff3a44);
-    color: white;
+    background: var(--color-primary);
+    color: var(--color-white);
 }
 
-/* =========================================
-   MEDIA QUERY: TABLET E DESKTOP
-========================================= */
-/* Quando a tela for maior que 480px, mudamos o layout */
+/* Tablet / Desktop — layout em linha única */
 @media (min-width: 578px) {
     .cart-item-main {
-        grid-template-columns: 1fr auto auto; 
-        grid-template-areas: "info qty remove"; 
+        grid-template-columns: 1fr auto auto;
+        grid-template-areas: "info qty remove";
     }
-    
+
     .quantity-control {
-        padding: 4px 12px; 
+        padding: 4px 12px;
         gap: 15px;
     }
-    
+
     .qty-btn {
         width: 32px;
         height: 32px;
         font-size: 1.4rem;
     }
-    
+
     .remove-btn {
-        width: 42px; 
+        width: 42px;
         height: 42px;
     }
 }
 
-/* =========================================
-   ÁREA DE PERSONALIZAÇÃO (Acordeão)
-========================================= */
+/* ─── CARRINHO — PERSONALIZAÇÃO (ACORDEÃO) ───────────────────────────────── */
+
 .cart-item-customization {
-    border-top: 1px dashed rgba(255, 255, 255, 0.15); /* Linha tracejada separando do lanche */
+    border-top: 1px dashed rgba(255, 255, 255, 0.15);
     padding-top: 12px;
 }
 
 .cart-item-customization summary {
-    color: #aaaaaa;
+    color: #aaa;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 4px 0;
-    list-style: none; /* Remove seta padrão esquisita do navegador */
+    list-style: none;
 }
 
-/* Esconde a seta padrão no Safari/Chrome antigo */
 .cart-item-customization summary::-webkit-details-marker {
-    display: none; 
+    display: none;
 }
 
-/* Nossa própria setinha customizada */
 .cart-item-customization summary::after {
     content: "▼";
     font-size: 0.7rem;
@@ -570,26 +616,22 @@
 
 .cart-item-customization[open] summary::after {
     content: "▲";
-    color: var(--color-primary, #ff3a44);
+    color: var(--color-primary);
 }
 
-/* Grid de Adicionais */
 .addons-list {
     display: grid;
-    grid-template-columns: 1fr; /* 1 item por linha no celular */
+    grid-template-columns: 1fr;
     gap: 8px;
-    margin-top: 12px;
-    margin-bottom: 12px;
+    margin: 12px 0;
 }
 
-/* 2 itens por linha no Tablet/Desktop para aproveitar espaço */
 @media (min-width: 480px) {
     .addons-list {
         grid-template-columns: 1fr 1fr;
     }
 }
 
-/* Cada opção de adicional */
 .addon-label {
     display: flex;
     align-items: center;
@@ -600,31 +642,29 @@
     color: #ddd;
     cursor: pointer;
     border: 1px solid transparent;
-    transition: 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
-/* Truque Avançado de CSS: Muda o estilo da div inteira se o checkbox dentro dela estiver marcado! */
 .addon-label:has(input:checked) {
     background: rgba(255, 58, 68, 0.1);
-    border: 1px solid var(--color-primary, #ff3a44);
-    color: #fff;
+    border-color: var(--color-primary);
+    color: var(--color-white);
 }
 
 .addon-checkbox {
     margin-right: 10px;
-    accent-color: var(--color-primary, #ff3a44); /* Deixa a caixinha vermelha */
+    accent-color: var(--color-primary);
     width: 18px;
     height: 18px;
 }
 
-/* Campo de Observação */
 .obs-input {
     width: 100%;
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
+    color: var(--color-white);
     padding: 12px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     font-family: inherit;
     font-size: 0.9rem;
     resize: vertical;
@@ -633,26 +673,11 @@
 
 .obs-input:focus {
     outline: none;
-    border-color: var(--color-primary, #ff3a44);
+    border-color: var(--color-primary);
 }
 
+/* ─── BANNER HERO CLICÁVEL ───────────────────────────────────────────────── */
 
-/* Estilo para a Tag de Promoção nos Cards */
-.badge-promo {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--color-primary);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 800;
-    z-index: 10;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-/* Efeito no Banner para indicar que é clicável */
 .hero-cta-link {
     display: block;
     width: 100%;
@@ -666,22 +691,5 @@
 }
 
 .hero-cta-link:hover .hero-img {
-    transform: scale(1.02); /* Leve zoom ao passar o mouse no banner */
+    transform: scale(1.02);
 }
-
-/* ====================================================
-   AJUSTE DE CAMADA DAS NOTIFICAÇÕES (Z-INDEX)
-   ==================================================== */
-
-.toastify,
-.toastify-popup,
-#toast,
-.toast,
-.notification {
-    display: none !important;
-}
-
-.toast.success { border-left: 4px solid var(--color-success); }
-.toast.error   { border-left: 4px solid var(--color-error); }
-.toast.warning { border-left: 4px solid var(--color-warning); }
-.toast.info    { border-left: 4px solid var(--color-info); }

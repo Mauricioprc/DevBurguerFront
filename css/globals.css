@@ -164,9 +164,10 @@ textarea {
     border-width: 0;
 }
 
-.hidden {
+[hidden] {
     display: none !important;
 }
+
 
 .visually-hidden {
     visibility: hidden;
@@ -178,4 +179,15 @@ textarea {
 
 .opacity-75 {
     opacity: 0.75;
+}
+
+/* ─── MODIFICADORES DE SECTION-TITLE ──────────────────────────────────────
+   FIX: removem style="color:white" e style="text-align:left" do HTML.
+   ────────────────────────────────────────────────────────────────────── */
+.section-title--white {
+    color: var(--color-white);
+}
+
+.section-title--left {
+    text-align: left;
 }
