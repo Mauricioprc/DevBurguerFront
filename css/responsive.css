@@ -82,7 +82,22 @@
        
     /* Esconde os botões de filtro no mobile/tablet */
     .categories {
-        display: none !important;
+        display: flex !important; 
+        overflow-x: auto !important;
+        justify-content: flex-start !important;
+        padding-top: 10px;
+        padding-bottom: 20px;
+        margin-left: -1rem; 
+        margin-right: -1rem;
+        padding-left: 1rem; 
+        padding-right: 1rem;
+        gap: 12px;
+        -webkit-overflow-scrolling: touch; 
+        scrollbar-width: none; 
+        -ms-overflow-style: none; 
+    }
+    .categories::-webkit-scrollbar {
+        display: none; 
     }
 
     /* Ajusta tamanho do título da prateleira */

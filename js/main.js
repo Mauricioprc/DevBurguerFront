@@ -65,7 +65,24 @@ function configurarEventListeners() {
     ELEMENTS.deliveryType.addEventListener('change', updateDeliveryType);
     ELEMENTS.pickupType.addEventListener('change',   updateDeliveryType);
 
-    // FIX: listener de pagamento existia duplicado (main.js + ui.js DOMContentLoaded anônimo).
+    if (ELEMENTS.cep) {
+        ELEMENTS.cep.addEventListener('input', e => {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Aplica a máscara de formato 00000-000
+            if (value.length > 5) {
+                value = value.replace(/^(\d{5})(\d)/, '$1-$2');
+            }
+            
+            e.target.value = value;
+
+            // Se completou o CEP (8 números + 1 hífen = 9 caracteres), dispara a busca
+            if (value.length === 9) {
+                buscarCEP(value);
+            }
+        });
+    }
+
     const paymentSelect = document.getElementById('paymentMethod');
     if (paymentSelect) paymentSelect.addEventListener('change', updatePaymentMethod);
 
@@ -188,6 +205,67 @@ function iniciarControleDeTema() {
             mostrarToast('Tema escuro ativado! 🌙');
         }
     });
+}
+async function buscarCEP(cepValue) {
+    const cleanCep = cepValue.replace(/\D/g, ''); 
+    
+    const addressInput = document.getElementById('address');
+    const neighborhoodInput = document.getElementById('neighborhood');
+    const errorMsg = document.getElementById('cepError');
+
+    if (cleanCep.length !== 8) return;
+
+    try {
+        // Efeito de "Carregando"
+        addressInput.placeholder = "A procurar rua...";
+        neighborhoodInput.placeholder = "A procurar bairro...";
+        addressInput.disabled = true;
+        neighborhoodInput.disabled = true;
+        if(errorMsg) errorMsg.hidden = true;
+
+        const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await response.json();
+
+        if (data.erro) {
+            // Erro 1: CEP não existe
+            if(errorMsg) {
+                errorMsg.textContent = "CEP não encontrado. Verifique os números.";
+                errorMsg.hidden = false;
+            }
+            addressInput.value = "";
+            neighborhoodInput.value = "";
+            
+        } else if (data.localidade !== "Sorocaba") {
+            // 🔥 Erro 2: A TRAVA DE CIDADE AQUI 🔥
+            if(errorMsg) {
+                errorMsg.textContent = `Puxa, entregamos apenas em Sorocaba! (O CEP digitado é de ${data.localidade}).`;
+                errorMsg.hidden = false;
+            }
+            addressInput.value = "";
+            neighborhoodInput.value = "";
+            
+            // Opcional: Desfoca o campo de endereço para evitar que o utilizador tente forçar
+            addressInput.blur();
+            
+        } else {
+            // Se passou por tudo e é de Sorocaba, preenche os campos!
+            addressInput.value = data.logradouro;
+            neighborhoodInput.value = data.bairro;
+            
+            // Foca no endereço para o utilizador digitar o número
+            addressInput.focus();
+            if(data.logradouro) {
+                addressInput.value += ", ";
+            }
+        }
+    } catch (error) {
+        console.error("Erro ao buscar CEP:", error);
+    } finally {
+        addressInput.disabled = false;
+        neighborhoodInput.disabled = false;
+        addressInput.placeholder = "Ex: Rua das Flores, 123";
+        neighborhoodInput.placeholder = "Ex: Centro";
+    }
 }
 
 // ─── Eventos globais ──────────────────────────────────────────────────────────

@@ -43,7 +43,6 @@ const APP_STATE = {
 };
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
-// FIX: TAXA_ENTREGA não era mais duplicada — antes existia tanto em CONFIG quanto em CONSTANTES
 const CONSTANTES = {
     TAXA_ENTREGA:     CONFIG.entrega.taxa,
     WHATSAPP_NUMERO:  CONFIG.lanchonete.whatsapp,
@@ -51,7 +50,6 @@ const CONSTANTES = {
 };
 
 // ─── Cache de elementos DOM ───────────────────────────────────────────────────
-// FIX: removidos cartIcon, promotions e promotionsGrid — esses IDs não existem no HTML
 const ELEMENTS = {
     // Header / Nav
     header:         document.getElementById('header'),
@@ -86,6 +84,7 @@ const ELEMENTS = {
     complement:     document.getElementById('complement'),
     changeAmount:   document.getElementById('changeAmount'),
     addressFieldset:document.getElementById('addressFieldset'),
+    cep: document.getElementById('cep'),
 
     // Resumo de valores
     subtotal:       document.getElementById('subtotal'),
