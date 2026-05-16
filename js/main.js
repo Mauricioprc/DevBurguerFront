@@ -42,7 +42,7 @@ function configurarEventListeners() {
         if (action === 'remove')            carrinhoGlobal.remover(indice);
     });
 
-    // Event delegation — botões "Add" e "Eu Quero!" nos grids de produtos e banner
+    // Event delegation — botões "Adicionar no carrinho" gerados dinamicamente
     document.addEventListener('click', e => {
         const btn = e.target.closest('[data-action="add"]');
         if (btn) adicionarAoCarrinho(parseInt(btn.dataset.id, 10));
@@ -66,7 +66,6 @@ function configurarEventListeners() {
     ELEMENTS.pickupType.addEventListener('change',   updateDeliveryType);
 
     // FIX: listener de pagamento existia duplicado (main.js + ui.js DOMContentLoaded anônimo).
-    // Mantido apenas aqui, chamando updatePaymentMethod de ui.js.
     const paymentSelect = document.getElementById('paymentMethod');
     if (paymentSelect) paymentSelect.addEventListener('change', updatePaymentMethod);
 
@@ -74,6 +73,16 @@ function configurarEventListeners() {
     ELEMENTS.clientPhone.addEventListener('input', e => {
         e.target.value = formatarTelefone(e.target.value);
     });
+
+    // Bloqueia a digitação de números no campo de Nome em tempo real
+    if (ELEMENTS.clientName) {
+        ELEMENTS.clientName.addEventListener('input', e => {
+            // A regex /\d/g procura por todos (g) os números e os substitui por nada ('')
+            e.target.value = e.target.value.replace(/\d/g, '');
+        });
+    }
+   
+
 
     // ── Menu mobile ───────────────────────────────────────────────────────────
     if (ELEMENTS.mobileMenuBtn) ELEMENTS.mobileMenuBtn.addEventListener('click', abrirMenuMobile);
@@ -135,6 +144,51 @@ function iniciarAnimacoesScroll() {
 
     document.querySelectorAll('.fade-in-section').forEach(el => observer.observe(el));
 }
+// ─── Gerenciamento de Tema (Dark/Light) ───────────────────────────────────────
+
+function iniciarControleDeTema() {
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const logoImg = document.querySelector('.logo-img'); 
+    
+    if (!themeToggle || !themeIcon) return;
+
+    // Caminhos das logos (Ajusta os nomes dos ficheiros aqui)
+    const logoDark = 'img/logo-devburger.jpeg';
+    const logoLight = 'img/logo-devburger-light.jpeg'; 
+    // 1. Verifica preferência salva
+    const temaSalvo = localStorage.getItem('devburger_theme');
+    
+    if (temaSalvo === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+        if(logoImg) logoImg.src = logoLight;
+    }
+
+    // 2. Clique para alternar
+    themeToggle.addEventListener('click', () => {
+        const temaAtual = document.documentElement.getAttribute('data-theme');
+        let novoTema = 'dark';
+        
+        if (temaAtual !== 'light') {
+            novoTema = 'light';
+        }
+
+        document.documentElement.setAttribute('data-theme', novoTema);
+        localStorage.setItem('devburger_theme', novoTema);
+        
+        // Troca ícone e LOGO
+        if (novoTema === 'light') {
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
+            if(logoImg) logoImg.src = logoLight;
+            mostrarToast('Tema claro ativado! ☀️');
+        } else {
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+            if(logoImg) logoImg.src = logoDark;
+            mostrarToast('Tema escuro ativado! 🌙');
+        }
+    });
+}
 
 // ─── Eventos globais ──────────────────────────────────────────────────────────
 
@@ -167,9 +221,11 @@ window.addEventListener('beforeunload', () => {
 // Todos consolidados neste único listener.
 document.addEventListener('DOMContentLoaded', () => {
     inicializarApp();
-    iniciarFeedbackTelefone();  // definida em ui.js
-    iniciarFeedbackTroco();     // definida em ui.js
-
+    iniciarFeedbackTelefone();  
+    iniciarFeedbackTroco();     
+    iniciarControleDeTema();    
     console.log('%c🍔 DevBurguer 2026', 'color: #FF3A44; font-size: 20px; font-weight: bold;');
     console.log('%cVersão: 2.0.0 — Refatorado', 'color: #00BCD4; font-size: 12px;');
 });
+
+

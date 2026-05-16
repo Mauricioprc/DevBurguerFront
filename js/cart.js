@@ -26,13 +26,10 @@ const ADICIONAIS_DISPONIVEIS = [
     { id: 'barbecue',   nome: 'Barbecue',           preco: 1.00 },
 ];
 
-// FIX: categorias bloqueadas agora usam os IDs exatos de CONFIG.categorias
-// O código original usava strings parciais como 'bebida', 'cerveja', 'alcool'
-// que não batiam com os IDs reais 'bebidas', 'alcoolicas' etc.
+// FIX: categorias bloqueadas 
 const CATEGORIAS_SEM_ADICIONAIS = new Set(['bebidas', 'sucos', 'alcoolicas', 'milkshakes']);
 
 // ─── Utilitário: calcula o valor dos adicionais de uma lista de IDs ───────────
-// FIX: lógica repetida 3x no código original (getSubtotal, atualizarItens, gerarResumo)
 function calcularValorAdicionais(listaIds) {
     return listaIds.reduce((soma, addId) => {
         const add = ADICIONAIS_DISPONIVEIS.find(a => a.id === addId);
@@ -273,7 +270,7 @@ class Carrinho {
 
     /** Monta a mensagem de texto para o WhatsApp */
     gerarResumo(dados) {
-        let msg = `*PEDIDO DevBurguer* 🔥\n\n`;
+        let msg = `*Pedido DevBurguer* 🔥\n\n`;
         msg += `👤 *Cliente:* ${dados.nome}\n`;
         msg += `📱 *Telefone:* ${dados.telefone}\n`;
         msg += `\n*📦 ITENS DO PEDIDO:*\n`;
@@ -302,12 +299,12 @@ class Carrinho {
         const taxa     = dados.tipoEntrega === 'delivery' ? CONSTANTES.TAXA_ENTREGA : 0;
         const total    = subtotal + taxa;
 
-        msg += `\n💰 *VALORES:*\n`;
+        msg += `\n\n💰 *VALORES:*\n`;
         msg += `Subtotal: R$ ${subtotal.toFixed(2)}\n`;
         if (taxa > 0) msg += `Taxa Entrega: R$ ${taxa.toFixed(2)}\n`;
         msg += `*Total: R$ ${total.toFixed(2)}*\n`;
 
-        msg += `\n📍 *ENTREGA:*\n`;
+        msg += `\n\n📍 *ENTREGA:*\n`;
         if (dados.tipoEntrega === 'delivery') {
             msg += `${dados.endereco}, ${dados.bairro}`;
             if (dados.complemento) msg += `, ${dados.complemento}`;
@@ -316,7 +313,7 @@ class Carrinho {
             msg += `Retirada em Loja\n${CONFIG.lanchonete.endereco}\n`;
         }
 
-        msg += `\n💳 *PAGAMENTO:* ${dados.pagamento.toUpperCase()}\n`;
+        msg += `\n\n💳 *PAGAMENTO:* ${dados.pagamento.toUpperCase()}\n`;
         if (dados.pagamento === 'dinheiro' && dados.troco) {
             msg += `Troco para: R$ ${dados.troco.toFixed(2)}\n`;
         }

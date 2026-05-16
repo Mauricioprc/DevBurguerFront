@@ -234,6 +234,11 @@
         width: 100%;
     }
 
+    .header-actions {
+        justify-self: end;
+        gap: 10px; /* Reduz um pouco o espaço entre sol e carrinho em telas muito pequenas */
+    }
+
     .mobile-menu-btn {
         display: block;
         font-size: 1.8rem;
@@ -250,7 +255,8 @@
         height: 45px;
     }
 
-    .cart-button {
+    .cart-button,
+    .theme-toggle {
         justify-self: end;
         width: 44px;
         height: 44px;
@@ -282,6 +288,14 @@
         width: 100%;
         padding: var(--spacing-lg) var(--spacing-md);
         font-size: var(--font-size-sm);
+    }
+
+    .card-footer .btn {
+        width: auto; 
+        padding: var(--spacing-sm) var(--spacing-lg); 
+        border-radius: var(--radius-full); 
+        display: flex;
+        align-items: center;
     }
 
     /* CARRINHO mobile */
@@ -377,10 +391,12 @@
 
     /* TOAST mobile */
     .toast {
-        bottom: var(--spacing-lg);
+        bottom: auto; 
+        top: var(--spacing-lg); 
         right: var(--spacing-lg);
         left: var(--spacing-lg);
         max-width: none;
+        animation: slideDown var(--transition-slow) forwards; 
     }
 
     /* SUMMARY mobile */

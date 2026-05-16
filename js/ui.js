@@ -94,8 +94,8 @@ function renderizarTopProdutos() {
                         </div>
                         <div class="card-footer">
                             <span class="preco">R$ ${produto.preco.toFixed(2)}</span>
-                            <button class="btn btn-primary btn-sm" data-action="add" data-id="${produto.id}">
-                                <span class="btn-icon">🛒</span> Eu Quero!
+                            <button class="btn btn-add-cart btn-sm" data-action="add" data-id="${produto.id}">
+                                <i class="fa-solid fa-cart-plus"></i> Adicionar
                             </button>
                         </div>
                     </div>
@@ -129,8 +129,8 @@ function _renderizarCard(produto) {
                 </div>
                 <div class="card-footer">
                     <span class="preco">R$ ${produto.preco.toFixed(2)}</span>
-                    <button class="btn btn-primary btn-sm" data-action="add" data-id="${produto.id}">
-                        <span class="btn-icon">+</span> Add
+                    <button class="btn btn-add-cart btn-sm" data-action="add" data-id="${produto.id}">
+                        <i class="fa-solid fa-cart-plus"></i> Adicionar
                     </button>
                 </div>
             </div>
@@ -331,7 +331,7 @@ function formatarMoeda(valor) {
  * @returns {boolean}
  */
 function validarFormulario() {
-    // 1. Validar Nome
+// 1. Validar Nome
     const nome = ELEMENTS.clientName.value.trim();
     if (!nome) {
         mostrarToast('Por favor, informe o seu Nome Completo.', 'error');
@@ -340,6 +340,12 @@ function validarFormulario() {
     }
     if (nome.length < 3) {
         mostrarToast('O nome deve ter pelo menos 3 letras.', 'error');
+        ELEMENTS.clientName.focus();
+        return false;
+    }
+    // A regex procura por qualquer dígito numérico (0-9)
+    if (/\d/.test(nome)) {
+        mostrarToast('O nome não deve conter números.', 'error');
         ELEMENTS.clientName.focus();
         return false;
     }
@@ -360,11 +366,21 @@ function validarFormulario() {
     // 3. Validar Endereço (apenas se for entrega em casa)
     const tipoEntrega = document.querySelector('input[name="deliveryType"]:checked').value;
     if (tipoEntrega === 'delivery') {
-        if (!ELEMENTS.address.value.trim()) {
+        const endereco = ELEMENTS.address.value.trim();
+        
+        if (!endereco) {
             mostrarToast('Por favor, informe a Rua e o Número para entrega.', 'error');
             ELEMENTS.address.focus();
             return false;
         }
+        
+        // testa se tem letras (incluindo acentuadas) e testa se tem números
+        if (!/[a-zA-ZÀ-ÿ]/.test(endereco) || !/\d/.test(endereco)) {
+            mostrarToast('Por favor, informe a Rua e o Número corretamente (ex: Rua das Flores, 123).', 'error');
+            ELEMENTS.address.focus();
+            return false;
+        }
+
         if (!ELEMENTS.neighborhood.value.trim()) {
             mostrarToast('Por favor, informe o Bairro para entrega.', 'error');
             ELEMENTS.neighborhood.focus();

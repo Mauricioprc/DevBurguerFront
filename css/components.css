@@ -22,11 +22,10 @@
 }
 
 /* Variantes */
-/* FIX: .btn-primary e .btn-carrinho tinham o mesmo gradient duplicado;
-   o gradiente foi centralizado em .btn-primary e .btn-carrinho herda. */
+
 .btn-primary,
 .btn-carrinho {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    background: linear-gradient(135deg, var( --color-success-dark) 0%, var( --color-success) 100%);
     color: var(--color-white);
     box-shadow: var(--shadow-md);
 }
@@ -57,6 +56,18 @@
 
 .btn-secondary:hover:not(:disabled) {
     background: var(--color-secondary-dark);
+}
+
+.btn-add-cart {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: var(--color-white);
+    border-radius: var(--radius-full);
+    border: none;
+}
+
+.btn-add-cart:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 58, 68, 0.3); /* Sombra vermelha charmosinha */
 }
 
 .btn-outline {
@@ -162,7 +173,7 @@
 .preco {
     font-size: 1.4rem;
     font-weight: 900;
-    color: var(--color-primary);
+    color: var(--color-text);
 }
 
 /* ─── BADGE ─────────────────────────────────────────────────────────────── */
@@ -456,7 +467,7 @@
     padding: var(--spacing-lg) var(--spacing-2xl);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    z-index: var(--z-tooltip);
+    z-index: var(--z-toast);
     animation: slideUp var(--transition-slow) forwards;
     max-width: 400px;
 }
