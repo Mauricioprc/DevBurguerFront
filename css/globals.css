@@ -4,12 +4,14 @@
 
 html {
     font-size: 16px;
+    scroll-behavior: smooth;
 }
 
 body {
     background-color: var(--color-background);
     color: var(--color-text);
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-family);
+    line-height: var(--line-height-normal);
 }
 
 /* TIPOGRAFIA */
@@ -20,32 +22,16 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0;
 }
 
-h1 {
-    font-size: var(--font-size-4xl);
-}
-
-h2 {
-    font-size: var(--font-size-3xl);
-}
-
-h3 {
-    font-size: var(--font-size-2xl);
-}
-
-h4 {
-    font-size: var(--font-size-xl);
-}
-
-h5 {
-    font-size: var(--font-size-lg);
-}
-
-h6 {
-    font-size: var(--font-size-base);
-}
+h1 { font-size: var(--font-size-4xl); }
+h2 { font-size: var(--font-size-3xl); }
+h3 { font-size: var(--font-size-2xl); }
+h4 { font-size: var(--font-size-xl); }
+h5 { font-size: var(--font-size-lg); }
+h6 { font-size: var(--font-size-base); }
 
 p {
     margin: 0;
+    line-height: var(--line-height-normal);
 }
 
 /* CONTAINER */
@@ -71,10 +57,14 @@ section {
     letter-spacing: -0.5px;
 }
 
+.section-title--white { color: var(--color-white); }
+.section-title--left  { text-align: left; }
+
 /* LINKS */
 a {
     color: var(--color-primary);
     transition: color var(--transition-base);
+    text-decoration: none;
 }
 
 a:hover {
@@ -109,10 +99,11 @@ textarea:focus,
 select:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(255, 58, 68, 0.1);
+    box-shadow: 0 0 0 3px rgba(255, 58, 68, 0.15);
 }
 
-input::placeholder {
+input::placeholder,
+textarea::placeholder {
     color: var(--color-text-light);
 }
 
@@ -121,24 +112,20 @@ textarea {
     min-height: 120px;
 }
 
-/* SCROLL */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+/* Focus visível para teclado */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
-::-webkit-scrollbar-track {
-    background: var(--color-light);
-}
-
+/* SCROLL CUSTOMIZADO */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--color-surface); }
 ::-webkit-scrollbar-thumb {
     background: var(--color-primary);
     border-radius: var(--radius-full);
 }
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--color-primary-dark);
-}
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary-dark); }
 
 /* SELEÇÃO */
 ::selection {
@@ -146,12 +133,7 @@ textarea {
     color: var(--color-white);
 }
 
-::-moz-selection {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-}
-
-/* UTILIDADES */
+/* UTILITÁRIOS */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -168,26 +150,14 @@ textarea {
     display: none !important;
 }
 
-
-.visually-hidden {
-    visibility: hidden;
+.form-hint {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-top: 4px;
 }
 
-.opacity-50 {
-    opacity: 0.5;
-}
-
-.opacity-75 {
-    opacity: 0.75;
-}
-
-/* ─── MODIFICADORES DE SECTION-TITLE ──────────────────────────────────────
-   FIX: removem style="color:white" e style="text-align:left" do HTML.
-   ────────────────────────────────────────────────────────────────────── */
-.section-title--white {
-    color: var(--color-white);
-}
-
-.section-title--left {
-    text-align: left;
+.no-products {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: var(--spacing-2xl);
 }

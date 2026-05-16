@@ -3,7 +3,7 @@
  * Bootstrap da aplicação — inicialização e event listeners centralizados.
  */
 
-/** Inicializa todos os módulos da aplicação */
+/** Inicializa todos os módulos */
 function inicializarApp() {
     renderizarCategorias();
     renderizarTopProdutos();
@@ -12,16 +12,19 @@ function inicializarApp() {
     configurarHeaderScroll();
     configurarEventListeners();
     carrinhoGlobal.atualizar();
+    // Atualiza o ano do rodapé dinamicamente
+    const footerYear = document.getElementById('footerYear');
+    if (footerYear) footerYear.textContent = new Date().getFullYear();
 }
 
-/** Adiciona/remove a classe 'scrolled' do header conforme a rolagem */
+/** Adiciona/remove a classe 'scrolled' do header conforme rolagem */
 function configurarHeaderScroll() {
     window.addEventListener('scroll', () => {
         ELEMENTS.header.classList.toggle('scrolled', window.scrollY > 50);
-    });
+    }, { passive: true });
 }
 
-/** Configura todos os event listeners em um único lugar */
+/** Centraliza todos os event listeners da aplicação */
 function configurarEventListeners() {
     // ── Carrinho ──────────────────────────────────────────────────────────────
     ELEMENTS.cartButton.addEventListener('click',   abrirCarrinho);
@@ -29,10 +32,11 @@ function configurarEventListeners() {
     ELEMENTS.cartOverlay.addEventListener('click',  fecharCarrinho);
     ELEMENTS.checkoutBtn.addEventListener('click',  abrirCheckout);
 
-    // Event delegation — botões de quantidade e remoção gerados dinamicamente
+    // Event delegation — botões de quantidade e remoção (gerados dinamicamente)
     ELEMENTS.cartItems.addEventListener('click', e => {
         const btn = e.target.closest('[data-action]');
         if (!btn) return;
+
         const indice = parseInt(btn.dataset.index, 10);
         const action = btn.dataset.action;
         const item   = carrinhoGlobal.itens[indice];
@@ -42,7 +46,7 @@ function configurarEventListeners() {
         if (action === 'remove')            carrinhoGlobal.remover(indice);
     });
 
-    // Event delegation — botões "Adicionar no carrinho" gerados dinamicamente
+    // Event delegation — botões "Adicionar" gerados dinamicamente
     document.addEventListener('click', e => {
         const btn = e.target.closest('[data-action="add"]');
         if (btn) adicionarAoCarrinho(parseInt(btn.dataset.id, 10));
@@ -65,24 +69,30 @@ function configurarEventListeners() {
     ELEMENTS.deliveryType.addEventListener('change', updateDeliveryType);
     ELEMENTS.pickupType.addEventListener('change',   updateDeliveryType);
 
-    // FIX: listener de pagamento existia duplicado (main.js + ui.js DOMContentLoaded anônimo).
     const paymentSelect = document.getElementById('paymentMethod');
     if (paymentSelect) paymentSelect.addEventListener('change', updatePaymentMethod);
 
-    // Formata o telefone enquanto o usuário digita
+    // Listener de CEP — máscara + busca automática
+    if (ELEMENTS.cep) {
+        ELEMENTS.cep.addEventListener('input', e => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) value = value.replace(/^(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+            if (value.length === 9) buscarCEP(value);
+        });
+    }
+
+    // Máscara de telefone em tempo real
     ELEMENTS.clientPhone.addEventListener('input', e => {
         e.target.value = formatarTelefone(e.target.value);
     });
 
-    // Bloqueia a digitação de números no campo de Nome em tempo real
+    // Bloqueia dígitos no campo Nome em tempo real
     if (ELEMENTS.clientName) {
         ELEMENTS.clientName.addEventListener('input', e => {
-            // A regex /\d/g procura por todos (g) os números e os substitui por nada ('')
             e.target.value = e.target.value.replace(/\d/g, '');
         });
     }
-   
-
 
     // ── Menu mobile ───────────────────────────────────────────────────────────
     if (ELEMENTS.mobileMenuBtn) ELEMENTS.mobileMenuBtn.addEventListener('click', abrirMenuMobile);
@@ -93,9 +103,12 @@ function configurarEventListeners() {
         link.addEventListener('click', fecharMenuMobile)
     );
 
-    // ── Teclado ───────────────────────────────────────────────────────────────
+    // ── Teclado — Esc fecha painéis ───────────────────────────────────────────
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') { fecharCarrinho(); fecharCheckout(); }
+        if (e.key !== 'Escape') return;
+        fecharCarrinho();
+        fecharCheckout();
+        fecharMenuMobile();
     });
 
     // ── Smooth scroll para âncoras ────────────────────────────────────────────
@@ -108,6 +121,7 @@ function configurarEventListeners() {
             if (destino) {
                 destino.scrollIntoView({ behavior: 'smooth' });
                 fecharCarrinho();
+                fecharMenuMobile();
             }
         });
     });
@@ -118,18 +132,28 @@ function configurarEventListeners() {
 function abrirMenuMobile() {
     ELEMENTS.navMenu.classList.add('active');
     ELEMENTS.menuOverlay.classList.add('active');
+    ELEMENTS.mobileMenuBtn.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
 }
 
 function fecharMenuMobile() {
     ELEMENTS.navMenu.classList.remove('active');
     if (ELEMENTS.menuOverlay) ELEMENTS.menuOverlay.classList.remove('active');
+    if (ELEMENTS.mobileMenuBtn) ELEMENTS.mobileMenuBtn.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
 }
 
-// ─── Animações de scroll ──────────────────────────────────────────────────────
+// ─── Animações de scroll (IntersectionObserver) ───────────────────────────────
 
 function iniciarAnimacoesScroll() {
+    // Respeita a preferência do usuário por menos animações
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.fade-in-section').forEach(el => {
+            el.classList.add('is-visible');
+        });
+        return;
+    }
+
     const observer = new IntersectionObserver(
         entradas => {
             entradas.forEach(entrada => {
@@ -139,70 +163,137 @@ function iniciarAnimacoesScroll() {
                 }
             });
         },
-        { threshold: 0.15 }
+        { threshold: 0.12 }
     );
 
     document.querySelectorAll('.fade-in-section').forEach(el => observer.observe(el));
 }
+
 // ─── Gerenciamento de Tema (Dark/Light) ───────────────────────────────────────
 
 function iniciarControleDeTema() {
     const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = document.getElementById('themeIcon');
-    const logoImg = document.querySelector('.logo-img'); 
-    
+    const themeIcon   = document.getElementById('themeIcon');
+    const logoImg     = document.querySelector('.logo-img');
+
     if (!themeToggle || !themeIcon) return;
 
-    // Caminhos das logos (Ajusta os nomes dos ficheiros aqui)
-    const logoDark = 'img/logo-devburger.jpeg';
-    const logoLight = 'img/logo-devburger-light.jpeg'; 
-    // 1. Verifica preferência salva
-    const temaSalvo = localStorage.getItem('devburger_theme');
-    
-    if (temaSalvo === 'light') {
-        document.documentElement.setAttribute('data-theme', 'light');
-        themeIcon.classList.replace('fa-sun', 'fa-moon');
-        if(logoImg) logoImg.src = logoLight;
-    }
+    const logoDark  = 'img/logo-devburger.jpeg';
+    const logoLight = 'img/logo-devburger-light.jpeg';
 
-    // 2. Clique para alternar
+    const _aplicarTema = (tema) => {
+        const isLight = tema === 'light';
+        document.documentElement.setAttribute('data-theme', tema);
+        localStorage.setItem('devburger_theme', tema);
+
+        themeIcon.className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        themeToggle.setAttribute('aria-label', isLight ? 'Ativar tema escuro' : 'Ativar tema claro');
+        if (logoImg) logoImg.src = isLight ? logoLight : logoDark;
+    };
+
+    // Aplica tema salvo (sem toast na carga inicial)
+    const temaSalvo = localStorage.getItem('devburger_theme');
+    if (temaSalvo) _aplicarTema(temaSalvo);
+
     themeToggle.addEventListener('click', () => {
         const temaAtual = document.documentElement.getAttribute('data-theme');
-        let novoTema = 'dark';
-        
-        if (temaAtual !== 'light') {
-            novoTema = 'light';
+        const novoTema  = temaAtual === 'light' ? 'dark' : 'light';
+        _aplicarTema(novoTema);
+        mostrarToast(novoTema === 'light' ? 'Tema claro ativado ☀️' : 'Tema escuro ativado 🌙', 'info');
+    });
+}
+
+// ─── Busca de CEP (ViaCEP) ───────────────────────────────────────────────────
+
+/**
+ * Busca o endereço via ViaCEP e preenche os campos.
+ * Bloqueia CEPs fora de Sorocaba.
+ * @param {string} cepValue  ex: "18000-000"
+ */
+async function buscarCEP(cepValue) {
+    const cleanCep    = cepValue.replace(/\D/g, '');
+    if (cleanCep.length !== 8) return;
+
+    const addressInput      = ELEMENTS.address;
+    const neighborhoodInput = ELEMENTS.neighborhood;
+    const errorMsg          = document.getElementById('cepError');
+    const loadingMsg        = document.getElementById('cepLoading');
+
+    // Estado: carregando
+    addressInput.disabled      = true;
+    neighborhoodInput.disabled = true;
+    if (errorMsg)   { errorMsg.hidden   = true; errorMsg.textContent = ''; }
+    if (loadingMsg) { loadingMsg.hidden = false; }
+
+    try {
+        const res  = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await res.json();
+
+        if (data.erro) {
+            if (errorMsg) {
+                errorMsg.textContent = '❌ CEP não encontrado. Verifique os números.';
+                errorMsg.style.color = 'var(--color-error)';
+                errorMsg.hidden = false;
+            }
+            addressInput.value      = '';
+            neighborhoodInput.value = '';
+            return;
         }
 
-        document.documentElement.setAttribute('data-theme', novoTema);
-        localStorage.setItem('devburger_theme', novoTema);
-        
-        // Troca ícone e LOGO
-        if (novoTema === 'light') {
-            themeIcon.classList.replace('fa-sun', 'fa-moon');
-            if(logoImg) logoImg.src = logoLight;
-            mostrarToast('Tema claro ativado! ☀️');
-        } else {
-            themeIcon.classList.replace('fa-moon', 'fa-sun');
-            if(logoImg) logoImg.src = logoDark;
-            mostrarToast('Tema escuro ativado! 🌙');
+        if (data.localidade !== 'Sorocaba') {
+            if (errorMsg) {
+                errorMsg.textContent = `🚫 Entregamos apenas em Sorocaba! (CEP é de ${data.localidade}).`;
+                errorMsg.style.color = 'var(--color-error)';
+                errorMsg.hidden = false;
+            }
+            addressInput.value      = '';
+            neighborhoodInput.value = '';
+            return;
         }
-    });
+
+        // CEP válido e de Sorocaba — preenche campos
+        addressInput.value      = data.logradouro ? data.logradouro + ', ' : '';
+        neighborhoodInput.value = data.bairro ?? '';
+
+        if (errorMsg) {
+            errorMsg.textContent = '✅ Endereço encontrado!';
+            errorMsg.style.color = 'var(--color-success)';
+            errorMsg.hidden = false;
+        }
+
+        // Foca no endereço para digitar o número
+        addressInput.focus();
+        // Posiciona cursor no final
+        const len = addressInput.value.length;
+        addressInput.setSelectionRange(len, len);
+
+    } catch (err) {
+        console.error('Erro ao buscar CEP:', err);
+        if (errorMsg) {
+            errorMsg.textContent = '⚠️ Não foi possível buscar o CEP. Preencha manualmente.';
+            errorMsg.style.color = 'var(--color-warning)';
+            errorMsg.hidden = false;
+        }
+    } finally {
+        addressInput.disabled      = false;
+        neighborhoodInput.disabled = false;
+        if (loadingMsg) loadingMsg.hidden = true;
+    }
 }
 
 // ─── Eventos globais ──────────────────────────────────────────────────────────
 
 window.addEventListener('error', e => {
     console.error('❌ Erro global:', e.error);
-    mostrarToast('Ocorreu um erro. Tente novamente.', 'error');
+    mostrarToast('Ocorreu um erro inesperado. Tente novamente.', 'error');
 });
 
 window.addEventListener('unhandledrejection', e => {
     console.error('❌ Promise rejeitada:', e.reason);
-    mostrarToast('Ocorreu um erro. Tente novamente.', 'error');
+    mostrarToast('Ocorreu um erro inesperado. Tente novamente.', 'error');
 });
 
-/** Sincroniza o carrinho entre abas do navegador */
+/** Sincroniza o carrinho entre abas */
 window.addEventListener('storage', e => {
     if (e.key === 'devburger_carrinho') {
         carrinhoGlobal.carregarDoLocal();
@@ -216,16 +307,12 @@ window.addEventListener('beforeunload', () => {
 });
 
 // ─── Bootstrap ────────────────────────────────────────────────────────────────
-// FIX: havia 3 DOMContentLoaded separados em ui.js (feedback de telefone,
-// feedback de troco e listener de pagamento) + 1 aqui = 4 no total.
-// Todos consolidados neste único listener.
+
 document.addEventListener('DOMContentLoaded', () => {
     inicializarApp();
-    iniciarFeedbackTelefone();  
-    iniciarFeedbackTroco();     
-    iniciarControleDeTema();    
-    console.log('%c🍔 DevBurguer 2026', 'color: #FF3A44; font-size: 20px; font-weight: bold;');
-    console.log('%cVersão: 2.0.0 — Refatorado', 'color: #00BCD4; font-size: 12px;');
+    iniciarFeedbackTelefone();
+    iniciarFeedbackTroco();
+    iniciarControleDeTema();
+    console.log('%c🍔 DevBurguer', 'color: #FF3A44; font-size: 22px; font-weight: 900;');
+    console.log('%cVersão 2.1.0 — Refatorado ✅', 'color: #00BCD4; font-size: 12px;');
 });
-
-
