@@ -79,25 +79,38 @@
     /* ===================================================
        CARDÁPIO NETFLIX STYLE (TABLETS E MOBILE)
        =================================================== */
-       
-    /* Esconde os botões de filtro no mobile/tablet */
+
+    /* Filtros: scroll horizontal no mobile (não esconder) */
     .categories {
-        display: flex !important; 
+        display: flex !important;
+        flex-wrap: nowrap !important;
         overflow-x: auto !important;
         justify-content: flex-start !important;
-        padding-top: 10px;
-        padding-bottom: 20px;
-        margin-left: -1rem; 
+        padding: 6px 0 16px;
+        margin-left: -1rem;
         margin-right: -1rem;
-        padding-left: 1rem; 
+        padding-left: 1rem;
         padding-right: 1rem;
-        gap: 12px;
-        -webkit-overflow-scrolling: touch; 
-        scrollbar-width: none; 
-        -ms-overflow-style: none; 
+        gap: 10px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
-    .categories::-webkit-scrollbar {
-        display: none; 
+
+    .categories::-webkit-scrollbar { display: none; }
+
+    .category-btn {
+        flex-shrink: 0;
+        padding: 8px 18px;
+        font-size: 0.8rem;
+        /* Garante que o texto não é cortado quando ativo */
+        overflow: visible;
+        white-space: nowrap;
+    }
+
+    /* Quando ativo, não cortar a sombra */
+    .category-btn.active {
+        box-shadow: 0 3px 10px rgba(255, 58, 68, 0.4);
     }
 
     /* Ajusta tamanho do título da prateleira */
@@ -232,7 +245,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         background: rgba(0, 0, 0, 0.6);
         z-index: var(--z-modal-backdrop);

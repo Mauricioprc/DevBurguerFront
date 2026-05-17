@@ -1,6 +1,6 @@
 /**
  * CHECKOUT.JS
- * Lógica de finalização de pedido e histórico de pedidos.
+ * Lógica de finalização de pedido, histórico e utilitários de formatação.
  */
 
 /**
@@ -11,6 +11,12 @@ async function finalizarPedido(event) {
     event.preventDefault();
     if (!validarFormulario()) return;
 
+    const submitBtn = event.target.querySelector('[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando...';
+    }
+
     const dados = {
         nome:        ELEMENTS.clientName.value.trim(),
         telefone:    ELEMENTS.clientPhone.value.trim(),
@@ -19,29 +25,31 @@ async function finalizarPedido(event) {
         bairro:      ELEMENTS.neighborhood.value.trim(),
         complemento: ELEMENTS.complement.value.trim(),
         pagamento:   document.getElementById('paymentMethod').value,
+        tipoCartao:  document.getElementById('cardType')?.value ?? null,
         troco:       ELEMENTS.changeAmount.value ? parseFloat(ELEMENTS.changeAmount.value) : null,
     };
 
     const resumo     = carrinhoGlobal.gerarResumo(dados);
     const urlWhatsApp = `https://api.whatsapp.com/send?phone=${CONSTANTES.WHATSAPP_NUMERO}&text=${encodeURIComponent(resumo)}`;
+
     window.open(urlWhatsApp, '_blank');
 
     salvarPedidoNoHistorico(dados, resumo);
-
     carrinhoGlobal.limpar();
     ELEMENTS.checkoutForm.reset();
+    updateDeliveryType(); // Restaura o estado visual do formulário
     fecharCheckout();
 
-    mostrarToast('✅ Pedido enviado com sucesso! Aguarde contato no WhatsApp.');
+    mostrarToast('✅ Pedido enviado! Aguarde contato no WhatsApp.');
+
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Confirmar e Enviar pelo WhatsApp';
+    }
 }
 
 // ─── Histórico de pedidos ─────────────────────────────────────────────────────
 
-/**
- * Salva o pedido no histórico local (localStorage).
- * @param {Object} dados
- * @param {string} resumo
- */
 function salvarPedidoNoHistorico(dados, resumo) {
     try {
         const historico = recuperarHistoricoPedidos();
@@ -55,14 +63,10 @@ function salvarPedidoNoHistorico(dados, resumo) {
         });
         localStorage.setItem('devburger_pedidos', JSON.stringify(historico));
     } catch (e) {
-        console.error('Erro ao salvar pedido:', e);
+        console.error('Erro ao salvar pedido no histórico:', e);
     }
 }
 
-/**
- * Retorna o histórico de pedidos do localStorage.
- * @returns {Array}
- */
 function recuperarHistoricoPedidos() {
     try {
         return JSON.parse(localStorage.getItem('devburger_pedidos')) || [];
@@ -71,10 +75,6 @@ function recuperarHistoricoPedidos() {
     }
 }
 
-/**
- * Gera um relatório consolidado dos pedidos (uso administrativo).
- * @returns {Object|null}
- */
 function gerarRelatorioPedidos() {
     const historico = recuperarHistoricoPedidos();
     if (historico.length === 0) return null;
@@ -89,13 +89,10 @@ function gerarRelatorioPedidos() {
     };
 }
 
-/**
- * Exporta os pedidos como arquivo CSV para download.
- */
 function exportarPedidosCSV() {
     const historico = recuperarHistoricoPedidos();
     if (historico.length === 0) {
-        alert('Nenhum pedido para exportar');
+        mostrarToast('Nenhum pedido para exportar.', 'warning');
         return;
     }
 
@@ -105,7 +102,7 @@ function exportarPedidosCSV() {
     });
 
     const csv  = `Data,Cliente,Telefone,Status\n${linhas.join('\n')}`;
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url  = URL.createObjectURL(blob);
     const link = Object.assign(document.createElement('a'), {
         href:     url,
@@ -121,7 +118,7 @@ function exportarPedidosCSV() {
 // ─── Formatação de telefone ───────────────────────────────────────────────────
 
 /**
- * Formata um número de telefone no padrão (XX) XXXXX-XXXX progressivamente.
+ * Formata número de telefone progressivamente no padrão (XX) XXXXX-XXXX.
  * @param {string} tel
  * @returns {string}
  */
@@ -134,15 +131,14 @@ function formatarTelefone(tel) {
     return `(${nums.slice(0, 2)}) ${nums.slice(2, 7)}-${nums.slice(7)}`;
 }
 
-// ─── Debug ────────────────────────────────────────────────────────────────────
+// ─── Debug (apenas desenvolvimento) ──────────────────────────────────────────
 
-/** Exibe informações de debug no console (ambiente de desenvolvimento). */
 function debugCheckout() {
     console.group('🐛 DEBUG Checkout');
-    console.log('Carrinho:',   carrinhoGlobal.itens);
-    console.log('Subtotal:',   carrinhoGlobal.getSubtotal());
-    console.log('Total:',      carrinhoGlobal.getTotal());
-    console.log('Histórico:',  recuperarHistoricoPedidos());
-    console.log('Relatório:',  gerarRelatorioPedidos());
+    console.log('Carrinho:',  carrinhoGlobal.itens);
+    console.log('Subtotal:',  carrinhoGlobal.getSubtotal());
+    console.log('Total:',     carrinhoGlobal.getTotal());
+    console.log('Histórico:', recuperarHistoricoPedidos());
+    console.log('Relatório:', gerarRelatorioPedidos());
     console.groupEnd();
 }
